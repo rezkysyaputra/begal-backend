@@ -10,5 +10,6 @@ publicRoute.post(
   upload.single('file'),
   UserController.register
 );
+publicRoute.post('/api/v1/login', UserController.login);
 
 export default publicRoute;

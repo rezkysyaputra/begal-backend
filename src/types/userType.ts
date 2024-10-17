@@ -1,5 +1,3 @@
-import { Document } from 'mongoose';
-
 type Address = {
   street: string;
   city: string;
@@ -9,7 +7,7 @@ type Address = {
   longitude: number;
 };
 
-export type userRequest = {
+export type CreateUserRequest = {
   name: string;
   email: string;
   password: string;
@@ -18,8 +16,17 @@ export type userRequest = {
   address: Address;
 };
 
-export type userResponse = {
+export type CreateUserResponse = {
   name: string;
   role: 'user' | 'seller' | 'admin';
   created_at: Date;
+};
+
+export type LoginUserRequest = {
+  email: string;
+  password: string;
+};
+
+export type LoginUserResponse = {
+  token: string;
 };

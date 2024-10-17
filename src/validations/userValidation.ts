@@ -16,4 +16,9 @@ export class UserValidation {
       longitude: z.number(),
     }),
   });
+
+  static readonly LOGIN: ZodType = z.object({
+    email: z.string().email(),
+    password: z.string().min(1).max(255),
+  });
 }
