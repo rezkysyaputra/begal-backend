@@ -1,0 +1,508 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Galon Sales API",
+    "description": "API untuk aplikasi jual beli galon dengan tiga role (user, seller, admin).",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "summary": "Pendaftaran akun baru",
+        "tags": ["User"],
+        "requestBody": {
+          "description": "Informasi akun pengguna",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Akun berhasil dibuat"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login dengan email dan password",
+        "tags": ["User"],
+        "requestBody": {
+          "description": "Informasi login",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Berhasil login"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "summary": "Logout pengguna",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Berhasil logout"
+          }
+        }
+      }
+    },
+    "/seller/nearby": {
+      "get": {
+        "summary": "Mendapatkan daftar seller terdekat",
+        "tags": ["User", "Seller"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "latitude",
+            "schema": {
+              "type": "number"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "longitude",
+            "schema": {
+              "type": "number"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar seller terdekat berhasil diambil"
+          }
+        }
+      }
+    },
+    "/products/seller/{seller_id}": {
+      "get": {
+        "summary": "Mendapatkan daftar produk dari seller",
+        "tags": ["User", "Seller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seller_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Daftar produk berhasil diambil"
+          }
+        }
+      }
+    },
+    "/seller/search": {
+      "get": {
+        "summary": "Mencari seller berdasarkan nama atau lokasi",
+        "tags": ["User", "Seller"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Hasil pencarian berhasil diambil"
+          }
+        }
+      }
+    },
+    "/seller/{seller_id}": {
+      "get": {
+        "summary": "Mendapatkan detail seller",
+        "tags": ["User", "Seller"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seller_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail seller berhasil diambil"
+          }
+        }
+      }
+    },
+    "/order": {
+      "post": {
+        "summary": "Membuat pesanan galon",
+        "tags": ["User", "Order"],
+        "requestBody": {
+          "description": "Informasi pesanan",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "delivery_address": {
+                    "type": "object",
+                    "properties": {
+                      "street": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "postal_code": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "payment_method": {
+                    "type": "string",
+                    "enum": ["transfer", "cash"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pesanan berhasil dibuat"
+          }
+        }
+      }
+    },
+    "/payment": {
+      "post": {
+        "summary": "Memproses pembayaran",
+        "tags": ["User", "Payment"],
+        "requestBody": {
+          "description": "Informasi pembayaran",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_id": {
+                    "type": "string"
+                  },
+                  "payment_method": {
+                    "type": "string",
+                    "enum": ["transfer", "cash"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pembayaran berhasil"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "summary": "Mendapatkan riwayat pesanan pengguna",
+        "tags": ["User", "Order"],
+        "responses": {
+          "200": {
+            "description": "Daftar pesanan berhasil diambil"
+          }
+        }
+      }
+    },
+    "/order/{order_id}": {
+      "get": {
+        "summary": "Mendapatkan detail pesanan",
+        "tags": ["User", "Order"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detail pesanan berhasil diambil"
+          }
+        }
+      }
+    },
+    "/review/seller/{seller_id}": {
+      "post": {
+        "summary": "Mengirimkan ulasan untuk seller",
+        "tags": ["User", "Review"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "seller_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Ulasan dan rating",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rating": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "review": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ulasan berhasil dikirim"
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "summary": "Mendapatkan informasi profil pengguna",
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Profil pengguna berhasil diambil"
+          }
+        }
+      },
+      "put": {
+        "summary": "Mengedit profil pengguna",
+        "tags": ["User"],
+        "requestBody": {
+          "description": "Informasi yang akan diupdate",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "street": {
+                        "type": "string"
+                      },
+                      "city": {
+                        "type": "string"
+                      },
+                      "postal_code": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profil berhasil diupdate"
+          }
+        }
+      }
+    },
+    "/user/change-password": {
+      "put": {
+        "summary": "Mengubah password pengguna",
+        "tags": ["User"],
+        "requestBody": {
+          "description": "Password lama dan baru",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password berhasil diubah"
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "summary": "Mendapatkan daftar notifikasi pengguna",
+        "tags": ["User", "Notification"],
+        "responses": {
+          "200": {
+            "description": "Daftar notifikasi berhasil diambil"
+          }
+        }
+      }
+    },
+    "/order/{order_id}/tracking": {
+      "get": {
+        "summary": "Mendapatkan status pengiriman pesanan",
+        "tags": ["User", "Order"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "order_id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status pengiriman berhasil diambil"
+          }
+        }
+      }
+    },
+    "/seller/register": {
+      "post": {
+        "summary": "Pendaftaran akun seller baru",
+        "tags": ["Seller"],
+        "requestBody": {
+          "description": "Informasi akun seller",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "owner_name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["name", "owner_name", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Akun seller berhasil dibuat"
+          }
+        }
+      }
+    }
+  }
+}

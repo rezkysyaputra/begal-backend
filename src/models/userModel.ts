@@ -6,12 +6,12 @@ interface User extends Document {
   password: string;
   phone: string;
   address: {
-    street: string;
-    city: string;
     province: string;
-    postal_code: string;
-    latitude: number;
-    longitude: number;
+    regency: string;
+    district: string;
+    village: string;
+    street: string;
+    detail: string;
   };
   role: 'user' | 'seller' | 'admin';
   profile_picture?: string;
@@ -26,12 +26,12 @@ const userSchema = new Schema<User>({
   phone: { type: String, required: true },
   profile_picture: { type: String, required: false },
   address: {
-    street: { type: String, required: true },
-    city: { type: String, required: true },
     province: { type: String, required: true },
-    postal_code: { type: String, required: true },
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
+    regency: { type: String, required: true },
+    district: { type: String, required: true },
+    village: { type: String, required: true },
+    street: { type: String, required: true },
+    detail: { type: String, required: true },
   },
   role: { type: String, enum: ['user', 'seller', 'admin'], default: 'user' },
   created_at: { type: Date, default: Date.now },

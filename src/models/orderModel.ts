@@ -1,12 +1,12 @@
 import { Schema, model, Document } from 'mongoose';
 
 interface Address {
-  street: string;
-  city: string;
   province: string;
-  postal_code: string;
-  latitude: number;
-  longitude: number;
+  regency: string;
+  district: string;
+  village: string;
+  street: string;
+  detail: string;
 }
 
 interface OrderProduct {
@@ -29,12 +29,12 @@ interface Order extends Document {
 }
 
 const addressSchema = new Schema<Address>({
-  street: String,
-  city: String,
   province: String,
-  postal_code: String,
-  latitude: Number,
-  longitude: Number,
+  regency: String,
+  district: String,
+  village: String,
+  street: String,
+  detail: String,
 });
 
 const orderProductSchema = new Schema<OrderProduct>({

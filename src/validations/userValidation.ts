@@ -7,13 +7,14 @@ export class UserValidation {
     password: z.string().min(1).max(255),
     phone: z.string().min(1).max(255),
     profile_picture: z.string().optional(),
+    role: z.enum(['user', 'seller', 'admin']).default('user'),
     address: z.object({
-      street: z.string().min(1).max(255),
-      city: z.string().min(1).max(255),
       province: z.string().min(1).max(255),
-      postal_code: z.string().min(1).max(255),
-      latitude: z.number(),
-      longitude: z.number(),
+      regency: z.string().min(1).max(255),
+      district: z.string().min(1).max(255),
+      village: z.string().min(1).max(255),
+      detail: z.string().min(1).max(255),
+      street: z.string().min(1).max(255),
     }),
   });
 

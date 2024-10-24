@@ -1,10 +1,10 @@
 type Address = {
-  street: string;
-  city: string;
   province: string;
-  postal_code: string;
-  latitude: number;
-  longitude: number;
+  regency: string;
+  district: string;
+  village: string;
+  street: string;
+  detail: string;
 };
 
 export type CreateUserRequest = {
@@ -12,7 +12,7 @@ export type CreateUserRequest = {
   email: string;
   password: string;
   phone: string;
-  profile_picture?: string;
+  role: 'user' | 'seller' | 'admin';
   address: Address;
 };
 

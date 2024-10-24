@@ -7,12 +7,12 @@ interface Seller extends Document {
   password: string;
   phone: string;
   address: {
-    street: string;
-    city: string;
     province: string;
-    postal_code: string;
-    latitude: number;
-    longitude: number;
+    regency: string;
+    district: string;
+    village: string;
+    street: string;
+    detail: string;
   };
   operational_hours: {
     open: string;
@@ -32,12 +32,12 @@ const sellerSchema = new Schema<Seller>({
   password: { type: String, required: true },
   phone: { type: String, required: true },
   address: {
-    street: { type: String, required: true },
-    city: { type: String, required: true },
     province: { type: String, required: true },
-    postal_code: { type: String, required: true },
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
+    regency: { type: String, required: true },
+    district: { type: String, required: true },
+    village: { type: String, required: true },
+    street: { type: String, required: true },
+    detail: { type: String, required: true },
   },
   operational_hours: {
     open: { type: String, required: true },

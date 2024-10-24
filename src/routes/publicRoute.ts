@@ -7,7 +7,7 @@ const publicRoute: Router = Router();
 // USERS
 publicRoute.post(
   '/api/v1/register',
-  upload.single('file'),
+  upload.single('image'),
   UserController.register
 );
 publicRoute.post('/api/v1/login', UserController.login);

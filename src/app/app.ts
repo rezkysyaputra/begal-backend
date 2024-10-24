@@ -13,10 +13,11 @@ app.use(express.json());
 connectDB();
 app.use(cors());
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(publicRoute);
 app.use(privateRoute);
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(errorMiddleware);
 
 export default app;
