@@ -262,3 +262,12 @@
 2024-10-26 05:54:40 [[32minfo[39m]: MongoDB Connected Successfully
 2024-10-26 05:55:07 [[32minfo[39m]: App running on port: http://localhost:3000
 2024-10-26 05:55:07 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:57:32 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/profile
+2024-10-26 05:58:07 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/change-password
+2024-10-26 05:58:07 [[31merror[39m]: Error occurred: Password lama salah
+2024-10-26 05:58:13 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/change-password
+2024-10-26 05:58:22 [[32minfo[39m]: Incoming Request: GET /api/v1/user/profile
+2024-10-26 05:58:52 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/change-password
+2024-10-26 05:58:56 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/change-password
+2024-10-26 05:58:56 [[31merror[39m]: Error occurred: Password lama salah
+2024-10-26 05:59:00 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/change-password
