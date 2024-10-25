@@ -27,7 +27,7 @@ export class UserController {
       const result = await UserService.login(request);
 
       res.status(200).json({
-        result,
+        token: result,
       });
     } catch (error) {
       next(error);

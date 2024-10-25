@@ -12,12 +12,14 @@ export const errorMiddleware = async (
     res.status(400).json({
       errors: `Validation Error : ${JSON.stringify(err)}`,
     });
+    return;
   }
 
   if (err instanceof ResponseError) {
     res.status(err.status).json({
       errors: err.message,
     });
+    return;
   }
 
   res.status(500).json({

@@ -36,6 +36,4 @@ export type LoginUserRequest = {
   password: string;
 };
 
-export type LoginUserResponse = {
-  token: string;
-};
+export type LoginUserResponse = string;

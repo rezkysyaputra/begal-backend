@@ -68,8 +68,6 @@ export class UserService {
     // create token
     const token = CreateJwtToken(loginData);
 
-    return {
-      token,
-    };
+    return token;
   }
 }

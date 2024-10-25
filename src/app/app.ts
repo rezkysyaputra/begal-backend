@@ -31,7 +31,7 @@ app.use(publicRoute);
 app.use(privateRoute);
 
 // error Middleware
-app.use(errorMiddleware);
 app.use(errorLogger);
+app.use(errorMiddleware);
 
 export default app;
