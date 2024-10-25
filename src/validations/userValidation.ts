@@ -22,4 +22,26 @@ export class UserValidation {
     email: z.string().email(),
     password: z.string().min(1).max(255),
   });
+
+  static readonly UPDATE: ZodType = z.object({
+    name: z.string().min(1).max(255).optional(),
+    email: z.string().email().optional(),
+    phone: z.string().min(1).max(255).optional(),
+    profile_picture: z.string().optional(),
+    address: z
+      .object({
+        province: z.string().min(1).max(255).optional(),
+        regency: z.string().min(1).max(255).optional(),
+        district: z.string().min(1).max(255).optional(),
+        village: z.string().min(1).max(255).optional(),
+        detail: z.string().min(1).max(255).optional(),
+        street: z.string().min(1).max(255).optional(),
+      })
+      .optional(),
+  });
+
+  static readonly CHANGE_PASSWORD: ZodType = z.object({
+    old_password: z.string().min(1).max(255),
+    new_password: z.string().min(1).max(255),
+  });
 }

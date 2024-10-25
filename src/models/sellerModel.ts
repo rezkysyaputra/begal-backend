@@ -20,7 +20,6 @@ interface Seller extends Document {
   };
   rating: number;
   reviews_count: number;
-  verified: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -45,7 +44,6 @@ const sellerSchema = new Schema<Seller>({
   },
   rating: { type: Number, default: 0 },
   reviews_count: { type: Number, default: 0 },
-  verified: { type: Boolean, default: false },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });

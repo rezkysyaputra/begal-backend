@@ -1,3 +1,9 @@
+import { UserModel } from '../models/userModel';
+
+export type UserRequest = {
+  user?: typeof UserModel;
+};
+
 type Address = {
   province: string;
   regency: string;
@@ -23,6 +29,9 @@ export type CreateUserResponse = {
 };
 
 export type LoginUserRequest = {
+  headers: any;
+  get(arg0: string): unknown;
+  user: any;
   email: string;
   password: string;
 };
