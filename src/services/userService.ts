@@ -10,6 +10,7 @@ import {
   GetUserResponse,
   toUserResponse,
   UpdateUserRequest,
+  ChangePasswordRequest,
 } from '../types/userType';
 import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
@@ -71,7 +72,7 @@ export class UserService {
     const getUser = await UserModel.findOne({ email: user.email });
 
     if (!getUser) {
-      throw new ResponseError(404, 'User not found');
+      throw new ResponseError(404, 'User tidak ditemukan');
     }
 
     return toUserResponse(getUser);
@@ -90,9 +91,41 @@ export class UserService {
     );
 
     if (!updateUser) {
-      throw new ResponseError(404, 'User not found');
+      throw new ResponseError(404, 'User tidak ditemukan');
     }
 
     return toUserResponse(updateUser);
+  }
+
+  static async changePassword(
+    user: any,
+    request: ChangePasswordRequest
+  ): Promise<string> {
+    const data = Validation.validate(UserValidation.CHANGE_PASSWORD, request);
+
+    // Check old password
+    const getUser = await UserModel.findOne({ email: user.email });
+
+    if (!getUser) {
+      throw new ResponseError(404, 'User tidak ditemukan');
+    }
+
+    const isPasswordMatch = await bcrypt.compare(
+      data.old_password,
+      getUser.password
+    );
+
+    if (!isPasswordMatch) {
+      throw new ResponseError(400, 'Password lama salah');
+    }
+
+    const newPassword = await bcrypt.hash(data.new_password, 10);
+
+    await UserModel.findOneAndUpdate(
+      { email: user.email },
+      { password: newPassword }
+    );
+
+    return 'Password berhasil diubah';
   }
 }

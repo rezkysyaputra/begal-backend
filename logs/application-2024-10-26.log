@@ -242,3 +242,23 @@
 2024-10-26 05:44:40 [[32minfo[39m]: Incoming Request: POST /api/v1/login
 2024-10-26 05:45:02 [[32minfo[39m]: Incoming Request: PATCH /api/v1/user/profile
 2024-10-26 05:45:20 [[32minfo[39m]: Incoming Request: GET /api/v1/user/profile
+2024-10-26 05:46:54 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:46:55 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:47:36 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:47:37 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:49:45 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:49:46 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:49:52 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:49:52 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:50:30 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:50:31 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:52:52 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:52:53 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:53:05 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:53:05 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:53:19 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:53:19 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:54:39 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:54:40 [[32minfo[39m]: MongoDB Connected Successfully
+2024-10-26 05:55:07 [[32minfo[39m]: App running on port: http://localhost:3000
+2024-10-26 05:55:07 [[32minfo[39m]: MongoDB Connected Successfully

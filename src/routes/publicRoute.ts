@@ -11,7 +11,6 @@ publicRoute.post(
   upload.single('image'),
   UserController.register
 );
-
 publicRoute.post('/api/v1/login', UserController.login);
 
 export default publicRoute;

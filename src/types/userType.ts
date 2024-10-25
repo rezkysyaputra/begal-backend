@@ -52,6 +52,11 @@ export type UpdateUserRequest = {
   address?: Address;
 };
 
+export type ChangePasswordRequest = {
+  old_password: string;
+  new_password: string;
+};
+
 export function toUserResponse(user: any): GetUserResponse {
   return {
     name: user.name,

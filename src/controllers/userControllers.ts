@@ -60,4 +60,19 @@ export class UserController {
       next(error);
     }
   }
+
+  static async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = (req as any).user;
+      const request = req.body;
+
+      const result = await UserService.changePassword(user, request);
+
+      res.status(200).json({
+        message: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
