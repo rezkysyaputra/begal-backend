@@ -5,21 +5,33 @@ import privateRoute from '../routes/privateRoute';
 import { errorMiddleware } from '../middlewares/errorMiddleware';
 import connectDB from './database';
 import path from 'path';
-import morgan from 'morgan';
+import { errorLogger, requestLogger } from '../middlewares/loggerMiddleware';
+// import swaggerUi from 'swagger-ui-express';
+// import swaggerJsDoc from 'swagger-jsdoc';
+// import swaggerOptions from '../swagger';
 
 // Inisialisasi express
 const app: express.Application = express();
 
 app.use(express.json());
+app.use(requestLogger);
+// connect to database
 connectDB();
+
 app.use(cors());
-app.use(morgan('combined'));
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Swagger docs
+// const swaggerSpec = swaggerJsDoc(swaggerOptions);
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Routes
 app.use(publicRoute);
 app.use(privateRoute);
 
+// error Middleware
 app.use(errorMiddleware);
+app.use(errorLogger);
 
 export default app;
