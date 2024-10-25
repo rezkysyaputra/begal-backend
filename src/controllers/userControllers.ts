@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-
 import { CreateUserRequest, LoginUserRequest } from '../types/userType';
 import { UserService } from '../services/userService';
 
@@ -13,7 +12,7 @@ export class UserController {
       const request: CreateUserRequest = req.body;
       const result = await UserService.register(request);
 
-      res.status(200).json({
+      res.status(201).json({
         data: result,
       });
     } catch (error) {
@@ -28,6 +27,19 @@ export class UserController {
 
       res.status(200).json({
         token: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const request = (req as any).user;
+      const result = await UserService.get(request);
+
+      res.status(200).json({
+        data: result,
       });
     } catch (error) {
       next(error);

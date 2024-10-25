@@ -7,6 +7,7 @@ import {
   CreateUserResponse,
   LoginUserRequest,
   LoginUserResponse,
+  GetUserResponse,
 } from '../types/userType';
 import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
@@ -34,6 +35,7 @@ export class UserService {
     // enkripsi password
     registerData.password = await bcrypt.hash(registerData.password, 10);
 
+    // simpan data
     const newUser = new UserModel(registerData);
     await newUser.save();
 
@@ -69,5 +71,15 @@ export class UserService {
     const token = CreateJwtToken(loginData);
 
     return token;
+  }
+
+  static async get(user: any): Promise<GetUserResponse> {
+    const getUser = await UserModel.findOne({ email: user.email });
+
+    if (!getUser) {
+      throw new ResponseError(404, 'User not found');
+    }
+
+    return getUser;
   }
 }

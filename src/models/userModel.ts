@@ -25,6 +25,7 @@ const userSchema = new Schema<User>({
   password: { type: String, required: true },
   phone: { type: String, required: true },
   profile_picture: { type: String, required: false },
+  role: { type: String, enum: ['user', 'seller', 'admin'], default: 'user' },
   address: {
     province: { type: String, required: true },
     regency: { type: String, required: true },
@@ -33,7 +34,6 @@ const userSchema = new Schema<User>({
     street: { type: String, required: true },
     detail: { type: String, required: true },
   },
-  role: { type: String, enum: ['user', 'seller', 'admin'], default: 'user' },
   created_at: { type: Date, default: Date.now },
   updated_at: { type: Date, default: Date.now },
 });
