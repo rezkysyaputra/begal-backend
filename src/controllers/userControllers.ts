@@ -35,8 +35,23 @@ export class UserController {
 
   static async get(req: Request, res: Response, next: NextFunction) {
     try {
-      const request = (req as any).user;
-      const result = await UserService.get(request);
+      const user = (req as any).user;
+      const result = await UserService.get(user);
+
+      res.status(200).json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = (req as any).user;
+      const request = req.body;
+
+      const result = await UserService.update(user, request);
 
       res.status(200).json({
         data: result,

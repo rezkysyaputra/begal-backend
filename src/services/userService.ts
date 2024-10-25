@@ -8,6 +8,8 @@ import {
   LoginUserRequest,
   LoginUserResponse,
   GetUserResponse,
+  toUserResponse,
+  UpdateUserRequest,
 } from '../types/userType';
 import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
@@ -16,10 +18,8 @@ export class UserService {
   static async register(
     request: CreateUserRequest
   ): Promise<CreateUserResponse> {
-    // validasi data baru
     const registerData = Validation.validate(UserValidation.REGISTER, request);
 
-    // cek nama dan email jika sudah terdaftar
     const name = await UserModel.findOne({ name: registerData.name });
 
     if (name) {
@@ -32,10 +32,8 @@ export class UserService {
       throw new ResponseError(400, 'Email sudah terdaftar');
     }
 
-    // enkripsi password
     registerData.password = await bcrypt.hash(registerData.password, 10);
 
-    // simpan data
     const newUser = new UserModel(registerData);
     await newUser.save();
 
@@ -47,17 +45,14 @@ export class UserService {
   }
 
   static async login(request: LoginUserRequest): Promise<LoginUserResponse> {
-    // validasi data login
     const loginData = Validation.validate(UserValidation.LOGIN, request);
 
-    // cek email
     const email = await UserModel.findOne({ email: loginData.email });
 
     if (!email) {
       throw new ResponseError(400, 'Email atau password salah');
     }
 
-    // cek password
     const isPasswordMatch = await bcrypt.compare(
       loginData.password,
       email.password
@@ -67,7 +62,6 @@ export class UserService {
       throw new ResponseError(400, 'Email atau password salah');
     }
 
-    // create token
     const token = CreateJwtToken(loginData);
 
     return token;
@@ -80,6 +74,25 @@ export class UserService {
       throw new ResponseError(404, 'User not found');
     }
 
-    return getUser;
+    return toUserResponse(getUser);
+  }
+
+  static async update(
+    user: any,
+    request: UpdateUserRequest
+  ): Promise<GetUserResponse> {
+    const newData = Validation.validate(UserValidation.UPDATE, request);
+
+    const updateUser = await UserModel.findOneAndUpdate(
+      { email: user.email },
+      newData,
+      { new: true }
+    );
+
+    if (!updateUser) {
+      throw new ResponseError(404, 'User not found');
+    }
+
+    return toUserResponse(updateUser);
   }
 }
