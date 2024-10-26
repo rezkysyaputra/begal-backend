@@ -43,21 +43,30 @@ const orderProductSchema = new Schema<OrderProduct>({
   price: { type: Number, required: true },
 });
 
-const orderSchema = new Schema<Order>({
-  user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  seller_id: { type: Schema.Types.ObjectId, ref: 'Seller', required: true },
-  products: [orderProductSchema],
-  delivery_address: { type: addressSchema, required: true },
-  total_price: { type: Number, required: true },
-  payment_method: { type: String, enum: ['transfer', 'cash'], required: true },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'delivered', 'cancelled'],
-    default: 'pending',
+const orderSchema = new Schema<Order>(
+  {
+    user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    seller_id: { type: Schema.Types.ObjectId, ref: 'Seller', required: true },
+    products: [orderProductSchema],
+    delivery_address: { type: addressSchema, required: true },
+    total_price: { type: Number, required: true },
+    payment_method: {
+      type: String,
+      enum: ['transfer', 'cash'],
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'confirmed', 'delivered', 'cancelled'],
+      default: 'pending',
+    },
+    order_date: { type: Date, default: Date.now },
+    delivery_date: { type: Date },
+    updated_at: { type: Date, default: Date.now },
   },
-  order_date: { type: Date, default: Date.now },
-  delivery_date: { type: Date },
-  updated_at: { type: Date, default: Date.now },
-});
+  {
+    timestamps: true,
+  }
+);
 
 export const OrderModel = model<Order>('Order', orderSchema);

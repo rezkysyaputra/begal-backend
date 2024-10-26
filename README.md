@@ -8,7 +8,8 @@
 1. PORT=3000
 2. MONGO_URI="link mongodb kalian, dengan nama db begal"
 3. JWT_SECRET=isinyaterserah
+4. CLOUDINARY_CLOUD_NAME , CLOUDINARY_API_KEY dan CLOUDINARY_API_SECRET. Value nya dari akun cloudinary kalian
 
-## Buat folder "uploads" untuk menyimpan gambar
+## Running:
 
-## Running: npm run dev
+- npm run dev

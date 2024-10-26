@@ -1,35 +1,38 @@
-import { UserValidation } from '../validations/userValidation';
 import { Validation } from '../validations/validation';
 import ResponseError from '../helpers/responseError';
 import bcrypt from 'bcrypt';
-import {
-  CreateUserRequest,
-  CreateUserResponse,
-  LoginUserRequest,
-  LoginUserResponse,
-  GetUserResponse,
-  toUserResponse,
-  UpdateUserRequest,
-  ChangePasswordRequest,
-} from '../types/userType';
-import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
 import cloudinary from '../utils/cloudinary';
+import {
+  CreateSellerRequest,
+  CreateSellerResponse,
+  GetSellerResponse,
+  LoginSellerRequest,
+  LoginSellerResponse,
+  toSellerResponse,
+  UpdateSellerRequest,
+} from '../types/sellerType';
+import { ChangePasswordRequest } from '../types/userType';
+import { SellerValidation } from '../validations/sellerValidation';
+import { SellerModel } from '../models/sellerModel';
 
-export class UserService {
+export class SellerService {
   static async register(
-    request: CreateUserRequest,
+    request: CreateSellerRequest,
     image: any
-  ): Promise<CreateUserResponse> {
-    const validatedData = Validation.validate(UserValidation.REGISTER, request);
+  ): Promise<CreateSellerResponse> {
+    const validatedData = Validation.validate(
+      SellerValidation.REGISTER,
+      request
+    );
 
-    const name = await UserModel.findOne({ name: validatedData.name });
+    const name = await SellerModel.findOne({ name: validatedData.name });
 
     if (name) {
       throw new ResponseError(400, 'Nama sudah terdaftar');
     }
 
-    const email = await UserModel.findOne({ email: validatedData.email });
+    const email = await SellerModel.findOne({ email: validatedData.email });
 
     if (email) {
       throw new ResponseError(400, 'Email sudah terdaftar');
@@ -50,7 +53,7 @@ export class UserService {
       image.stream.pipe(uploadResult);
     }
 
-    const newUser = await UserModel.create({
+    const newUser = await SellerModel.create({
       ...validatedData,
       profile_picture_url: profilePictureUrl,
     });
@@ -61,10 +64,12 @@ export class UserService {
     };
   }
 
-  static async login(request: LoginUserRequest): Promise<LoginUserResponse> {
-    const loginData = Validation.validate(UserValidation.LOGIN, request);
+  static async login(
+    request: LoginSellerRequest
+  ): Promise<LoginSellerResponse> {
+    const loginData = Validation.validate(SellerValidation.LOGIN, request);
 
-    const user = await UserModel.findOne({ email: loginData.email });
+    const user = await SellerModel.findOne({ email: loginData.email });
 
     if (!user) {
       throw new ResponseError(400, 'Email atau password salah');
@@ -84,23 +89,25 @@ export class UserService {
     return token;
   }
 
-  static async get(user: any): Promise<GetUserResponse> {
-    const getUser = await UserModel.findOne({ email: user.email });
+  static async get(user: any): Promise<GetSellerResponse> {
+    const getUser = await SellerModel.findOne({ email: user.email });
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
 
-    return toUserResponse(getUser);
+    return toSellerResponse(getUser);
   }
 
   static async update(
     user: any,
-    request: UpdateUserRequest
-  ): Promise<GetUserResponse> {
-    const newData = Validation.validate(UserValidation.UPDATE, request);
+    request: UpdateSellerRequest
+  ): Promise<GetSellerResponse> {
+    // Validasi data baru
+    const newData = Validation.validate(SellerValidation.UPDATE, request);
 
-    const existingData = await UserModel.findOne({ email: user.email });
+    // Ambil data pengguna yang sudah ada
+    const existingData = await SellerModel.findOne({ email: user.email });
     if (!existingData) {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
@@ -109,6 +116,10 @@ export class UserService {
     const mergedData = {
       ...existingData.toObject(),
       ...newData,
+      operational_hours: {
+        ...existingData.operational_hours,
+        ...newData.operational_hours,
+      },
       address: {
         ...existingData.address,
         ...newData.address,
@@ -116,7 +127,7 @@ export class UserService {
     };
 
     // Lakukan update dengan $set
-    const updatedUser = await UserModel.findOneAndUpdate(
+    const updatedUser = await SellerModel.findOneAndUpdate(
       { email: user.email },
       { $set: mergedData },
       { new: true }
@@ -126,17 +137,17 @@ export class UserService {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
 
-    return toUserResponse(updatedUser);
+    return toSellerResponse(updatedUser);
   }
 
   static async changePassword(
     user: any,
     request: ChangePasswordRequest
   ): Promise<string> {
-    const data = Validation.validate(UserValidation.CHANGE_PASSWORD, request);
+    const data = Validation.validate(SellerValidation.CHANGE_PASSWORD, request);
 
     // Check old password
-    const getUser = await UserModel.findOne({ email: user.email });
+    const getUser = await SellerModel.findOne({ email: user.email });
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
@@ -153,7 +164,7 @@ export class UserService {
 
     const newPassword = await bcrypt.hash(data.new_password, 10);
 
-    await UserModel.findOneAndUpdate(
+    await SellerModel.findOneAndUpdate(
       { email: user.email },
       { password: newPassword }
     );

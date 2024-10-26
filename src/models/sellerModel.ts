@@ -6,6 +6,8 @@ interface Seller extends Document {
   email: string;
   password: string;
   phone: string;
+  profile_picture_url?: string;
+  role: 'user' | 'seller' | 'admin';
   address: {
     province: string;
     regency: string;
@@ -20,32 +22,39 @@ interface Seller extends Document {
   };
   rating: number;
   reviews_count: number;
-  created_at: Date;
-  updated_at: Date;
 }
 
-const sellerSchema = new Schema<Seller>({
-  name: { type: String, required: true },
-  owner_name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  phone: { type: String, required: true },
-  address: {
-    province: { type: String, required: true },
-    regency: { type: String, required: true },
-    district: { type: String, required: true },
-    village: { type: String, required: true },
-    street: { type: String, required: true },
-    detail: { type: String, required: true },
+const sellerSchema = new Schema<Seller>(
+  {
+    name: { type: String, required: true },
+    owner_name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    phone: { type: String, required: true },
+    profile_picture_url: { type: String, required: false },
+    role: {
+      type: String,
+      enum: ['user', 'seller', 'admin'],
+      default: 'seller',
+    },
+    address: {
+      province: { type: String, required: true },
+      regency: { type: String, required: true },
+      district: { type: String, required: true },
+      village: { type: String, required: true },
+      street: { type: String, required: true },
+      detail: { type: String, required: true },
+    },
+    operational_hours: {
+      open: { type: String, required: true },
+      close: { type: String, required: true },
+    },
+    rating: { type: Number, default: 0 },
+    reviews_count: { type: Number, default: 0 },
   },
-  operational_hours: {
-    open: { type: String, required: true },
-    close: { type: String, required: true },
-  },
-  rating: { type: Number, default: 0 },
-  reviews_count: { type: Number, default: 0 },
-  created_at: { type: Date, default: Date.now },
-  updated_at: { type: Date, default: Date.now },
-});
+  {
+    timestamps: true,
+  }
+);
 
 export const SellerModel = model<Seller>('Seller', sellerSchema);

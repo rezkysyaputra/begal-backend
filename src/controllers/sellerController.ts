@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserRequest, LoginUserRequest } from '../types/userType';
-import { UserService } from '../services/userService';
+import { SellerService } from '../services/sellerService';
+import { CreateSellerRequest, LoginSellerRequest } from '../types/sellerType';
 
-export class UserController {
+export class SellerController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
       const image = req.file;
-      const request: CreateUserRequest = req.body;
-      const result = await UserService.register(request, image);
+      const request: CreateSellerRequest = req.body;
+      const result = await SellerService.register(request, image);
 
       res.status(201).json({
         data: result,
@@ -19,8 +19,8 @@ export class UserController {
 
   static async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const request: LoginUserRequest = req.body;
-      const result = await UserService.login(request);
+      const request: LoginSellerRequest = req.body;
+      const result = await SellerService.login(request);
 
       res.status(200).json({
         token: result,
@@ -33,7 +33,7 @@ export class UserController {
   static async get(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      const result = await UserService.get(user);
+      const result = await SellerService.get(user);
 
       res.status(200).json({
         data: result,
@@ -48,7 +48,7 @@ export class UserController {
       const user = (req as any).user;
       const request = req.body;
 
-      const result = await UserService.update(user, request);
+      const result = await SellerService.update(user, request);
 
       res.status(200).json({
         data: result,
@@ -63,7 +63,7 @@ export class UserController {
       const user = (req as any).user;
       const request = req.body;
 
-      const result = await UserService.changePassword(user, request);
+      const result = await SellerService.changePassword(user, request);
 
       res.status(200).json({
         message: result,
