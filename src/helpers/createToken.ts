@@ -1,7 +1,11 @@
 import jwt from 'jsonwebtoken';
-import { LoginUserRequest } from '../types/userType';
+type TokenRequest = {
+  id: string;
+  name: string;
+  role: string;
+};
 
-export const CreateJwtToken = (payload: LoginUserRequest): string => {
+export const CreateJwtToken = (payload: TokenRequest): string => {
   const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
     expiresIn: '1d',
   });

@@ -79,13 +79,19 @@ export class UserService {
       throw new ResponseError(400, 'Email atau password salah');
     }
 
-    const token = CreateJwtToken(loginData);
+    const payloadJwtToken = {
+      id: user._id as string,
+      name: user.name,
+      role: user.role,
+    };
+
+    const token = CreateJwtToken(payloadJwtToken);
 
     return token;
   }
 
   static async get(user: any): Promise<GetUserResponse> {
-    const getUser = await UserModel.findOne({ email: user.email });
+    const getUser = await UserModel.findById(user.id);
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
@@ -100,7 +106,7 @@ export class UserService {
   ): Promise<GetUserResponse> {
     const newData = Validation.validate(UserValidation.UPDATE, request);
 
-    const existingData = await UserModel.findOne({ email: user.email });
+    const existingData = await UserModel.findById(user.id);
     if (!existingData) {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
@@ -116,8 +122,8 @@ export class UserService {
     };
 
     // Lakukan update dengan $set
-    const updatedUser = await UserModel.findOneAndUpdate(
-      { email: user.email },
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      user.id,
       { $set: mergedData },
       { new: true }
     );
@@ -136,7 +142,7 @@ export class UserService {
     const data = Validation.validate(UserValidation.CHANGE_PASSWORD, request);
 
     // Check old password
-    const getUser = await UserModel.findOne({ email: user.email });
+    const getUser = await UserModel.findById(user.id);
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
@@ -153,10 +159,7 @@ export class UserService {
 
     const newPassword = await bcrypt.hash(data.new_password, 10);
 
-    await UserModel.findOneAndUpdate(
-      { email: user.email },
-      { password: newPassword }
-    );
+    await UserModel.findByIdAndUpdate(user.id, { password: newPassword });
 
     return 'Password berhasil diubah';
   }

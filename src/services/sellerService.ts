@@ -84,13 +84,19 @@ export class SellerService {
       throw new ResponseError(400, 'Email atau password salah');
     }
 
-    const token = CreateJwtToken(loginData);
+    const payloadJwtToken = {
+      id: user._id as string,
+      name: user.name,
+      role: user.role,
+    };
+
+    const token = CreateJwtToken(payloadJwtToken);
 
     return token;
   }
 
   static async get(user: any): Promise<GetSellerResponse> {
-    const getUser = await SellerModel.findOne({ email: user.email });
+    const getUser = await SellerModel.findById(user.id);
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
@@ -103,11 +109,10 @@ export class SellerService {
     user: any,
     request: UpdateSellerRequest
   ): Promise<GetSellerResponse> {
-    // Validasi data baru
     const newData = Validation.validate(SellerValidation.UPDATE, request);
 
     // Ambil data pengguna yang sudah ada
-    const existingData = await SellerModel.findOne({ email: user.email });
+    const existingData = await SellerModel.findById(user.id);
     if (!existingData) {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
@@ -127,17 +132,17 @@ export class SellerService {
     };
 
     // Lakukan update dengan $set
-    const updatedUser = await SellerModel.findOneAndUpdate(
-      { email: user.email },
+    const updatedSeller = await SellerModel.findByIdAndUpdate(
+      user.id,
       { $set: mergedData },
       { new: true }
     );
 
-    if (!updatedUser) {
+    if (!updatedSeller) {
       throw new ResponseError(404, 'User tidak ditemukan');
     }
 
-    return toSellerResponse(updatedUser);
+    return toSellerResponse(updatedSeller);
   }
 
   static async changePassword(
@@ -147,7 +152,7 @@ export class SellerService {
     const data = Validation.validate(SellerValidation.CHANGE_PASSWORD, request);
 
     // Check old password
-    const getUser = await SellerModel.findOne({ email: user.email });
+    const getUser = await SellerModel.findById(user.id);
 
     if (!getUser) {
       throw new ResponseError(404, 'User tidak ditemukan');
@@ -164,10 +169,7 @@ export class SellerService {
 
     const newPassword = await bcrypt.hash(data.new_password, 10);
 
-    await SellerModel.findOneAndUpdate(
-      { email: user.email },
-      { password: newPassword }
-    );
+    await SellerModel.findByIdAndUpdate(user.id, { password: newPassword });
 
     return 'Password berhasil diubah';
   }
