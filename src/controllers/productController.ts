@@ -60,4 +60,18 @@ export class ProductController {
       next(error);
     }
   }
+
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = (req as any).user;
+      const productId = req.params.productId;
+      const result: string = await ProductService.delete(user, productId);
+
+      res.status(200).json({
+        message: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

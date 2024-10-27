@@ -41,5 +41,9 @@ privateRoute.patch(
   upload.single('image'),
   ProductController.update
 );
+privateRoute.delete(
+  '/api/sellers/products/:productId',
+  ProductController.delete
+);
 
 export default privateRoute;

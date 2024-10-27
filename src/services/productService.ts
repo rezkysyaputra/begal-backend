@@ -96,7 +96,7 @@ export class ProductService {
       image_url: imageUrl,
     };
 
-    const product = await ProductModel.findOneAndUpdate(
+    const product = await ProductModel.findByIdAndUpdate(
       { _id: validatedData.id, seller_id: user.id },
       data,
       { new: true }
@@ -107,5 +107,22 @@ export class ProductService {
     }
 
     return toProductResponse(product);
+  }
+
+  static async delete(user: any, id: string): Promise<string> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ResponseError(400, 'Produk tidak ditemukan');
+    }
+
+    const product = await ProductModel.findByIdAndDelete({
+      _id: id,
+      seller_id: user.id,
+    });
+
+    if (!product) {
+      throw new ResponseError(404, 'Produk tidak ditemukan');
+    }
+
+    return 'Produk berhasil di hapus';
   }
 }
