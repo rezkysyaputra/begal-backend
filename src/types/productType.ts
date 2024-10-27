@@ -17,6 +17,7 @@ export type ProductResponse = {
 };
 
 export type UpdateProductRequest = {
+  id: string;
   name?: string;
   description?: string;
   price?: number;

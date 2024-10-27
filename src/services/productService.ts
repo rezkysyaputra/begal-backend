@@ -1,9 +1,11 @@
+import mongoose from 'mongoose';
 import ResponseError from '../helpers/responseError';
 import { ProductModel } from '../models/productModel';
 import {
   CreateProductRequest,
   ProductResponse,
   toProductResponse,
+  UpdateProductRequest,
 } from '../types/productType';
 import cloudinary from '../utils/cloudinary';
 import { ProductValidation } from '../validations/productValidation';
@@ -59,5 +61,51 @@ export class ProductService {
     }
 
     return products.map((product) => toProductResponse(product));
+  }
+
+  static async update(
+    user: any,
+    request: UpdateProductRequest,
+    image: any
+  ): Promise<ProductResponse> {
+    const validatedData = Validation.validate(
+      ProductValidation.UPDATE,
+      request
+    );
+
+    if (!mongoose.Types.ObjectId.isValid(request.id)) {
+      throw new ResponseError(400, 'Produk tidak ditemukan');
+    }
+
+    let imageUrl: string | null = null;
+
+    if (image) {
+      const uploadResult = cloudinary.uploader.upload_stream(
+        { folder: 'uploads' },
+        (error, result) => {
+          if (error) throw new ResponseError(409, 'Upload failed');
+
+          imageUrl = result!.secure_url;
+        }
+      );
+      image.stream.pipe(uploadResult);
+    }
+
+    const data = {
+      ...validatedData,
+      image_url: imageUrl,
+    };
+
+    const product = await ProductModel.findOneAndUpdate(
+      { _id: validatedData.id, seller_id: user.id },
+      data,
+      { new: true }
+    );
+
+    if (!product) {
+      throw new ResponseError(404, 'Produk tidak ditemukan');
+    }
+
+    return toProductResponse(product);
   }
 }

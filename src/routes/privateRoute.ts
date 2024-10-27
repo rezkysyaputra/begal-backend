@@ -36,5 +36,10 @@ privateRoute.post(
   ProductController.create
 );
 privateRoute.get('/api/sellers/products', ProductController.list);
+privateRoute.patch(
+  '/api/sellers/products/:productId',
+  upload.single('image'),
+  ProductController.update
+);
 
 export default privateRoute;
