@@ -35,6 +35,7 @@ export type LoginUserRequest = {
 export type LoginUserResponse = string;
 
 export type GetUserResponse = {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -60,6 +61,7 @@ export type ChangePasswordRequest = {
 
 export function toUserResponse(user: any): GetUserResponse {
   return {
+    id: user._id,
     name: user.name,
     email: user.email,
     phone: user.phone,

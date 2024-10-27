@@ -42,7 +42,7 @@ export class UserService {
       const uploadResult = cloudinary.uploader.upload_stream(
         { folder: 'uploads' },
         (error, result) => {
-          if (error) throw new ResponseError(409, 'Upload failed');
+          if (error) throw new ResponseError(409, 'Upload gambar gagal');
 
           profilePictureUrl = result!.secure_url;
         }

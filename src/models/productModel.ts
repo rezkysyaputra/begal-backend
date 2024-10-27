@@ -6,7 +6,7 @@ interface Product extends Document {
   description: string;
   price: number;
   stock: number;
-  image_url: string;
+  image_url?: string;
 }
 
 const productSchema = new Schema<Product>(
@@ -16,7 +16,7 @@ const productSchema = new Schema<Product>(
     description: { type: String, required: true },
     price: { type: Number, required: true },
     stock: { type: Number, required: true },
-    image_url: { type: String, required: true },
+    image_url: { type: String, required: false },
   },
   {
     timestamps: true,

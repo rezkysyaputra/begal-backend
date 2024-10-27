@@ -42,6 +42,7 @@ export type LoginSellerRequest = {
 export type LoginSellerResponse = string;
 
 export type GetSellerResponse = {
+  id: string;
   name: string;
   owner_name: string;
   email: string;
@@ -72,6 +73,7 @@ export type ChangePasswordRequest = {
 
 export function toSellerResponse(seller: any): GetSellerResponse {
   return {
+    id: seller._id,
     name: seller.name,
     owner_name: seller.owner_name,
     email: seller.email,
