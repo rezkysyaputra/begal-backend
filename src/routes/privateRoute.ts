@@ -9,35 +9,32 @@ const privateRoute: Router = Router();
 
 privateRoute.use(authMiddleware);
 // USER
-privateRoute.get('/api/v1/user/profile', UserController.get);
+privateRoute.get('/api/users/profile', UserController.get);
 privateRoute.patch(
-  '/api/v1/user/profile',
+  '/api/users/profile',
   upload.single('image'),
   UserController.update
 );
-privateRoute.patch(
-  '/api/v1/user/change-password',
-  UserController.changePassword
-);
+privateRoute.patch('/api/users/change-password', UserController.changePassword);
 
 // SELLER
-privateRoute.get('/api/v1/seller/profile', SellerController.get);
+privateRoute.get('/api/sellers/profile', SellerController.get);
 privateRoute.patch(
-  '/api/v1/seller/profile',
+  '/api/sellers/profile',
   upload.single('image'),
   SellerController.update
 );
 privateRoute.patch(
-  '/api/v1/seller/change-password',
+  '/api/sellers/change-password',
   SellerController.changePassword
 );
 
 // PRODUCT
 privateRoute.post(
-  '/api/v1/seller/product',
+  '/api/sellers/products',
   upload.single('image'),
   ProductController.create
 );
-privateRoute.get('/api/v1/seller/product', ProductController.list);
+privateRoute.get('/api/sellers/products', ProductController.list);
 
 export default privateRoute;

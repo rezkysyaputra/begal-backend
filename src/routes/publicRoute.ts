@@ -7,18 +7,18 @@ const publicRoute: Router = Router();
 
 // USERS
 publicRoute.post(
-  '/api/v1/user/register',
+  '/api/users/register',
   upload.single('image'),
   UserController.register
 );
-publicRoute.post('/api/v1/user/login', UserController.login);
+publicRoute.post('/api/users/login', UserController.login);
 
 // SELLERS
 publicRoute.post(
-  '/api/v1/seller/register',
+  '/api/sellers/register',
   upload.single('image'),
   SellerController.register
 );
-publicRoute.post('/api/v1/seller/login', SellerController.login);
+publicRoute.post('/api/sellers/login', SellerController.login);
 
 export default publicRoute;
