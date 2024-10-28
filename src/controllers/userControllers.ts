@@ -1,10 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import {
-  CreateUserRequest,
-  LoginUserRequest,
-  NearbySellersResponse,
-} from '../types/userType';
+import { CreateUserRequest, LoginUserRequest } from '../types/userType';
 import { UserService } from '../services/userService';
+import { GetSellerResponse } from '../types/sellerType';
 
 export class UserController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -84,8 +81,9 @@ export class UserController {
   ) {
     try {
       const user = (req as any).user;
-      const result: NearbySellersResponse[] =
-        await UserService.getNearbySellers(user);
+      const result: GetSellerResponse[] = await UserService.getNearbySellers(
+        user
+      );
 
       res.status(200).json({
         data: result,
