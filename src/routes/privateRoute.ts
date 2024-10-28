@@ -6,8 +6,8 @@ import { ProductController } from '../controllers/productController';
 import upload from '../middlewares/uploadMiddleware';
 
 const privateRoute: Router = Router();
-
 privateRoute.use(authMiddleware);
+
 // USER
 privateRoute.get('/api/users/profile', UserController.get);
 privateRoute.patch(
@@ -16,6 +16,7 @@ privateRoute.patch(
   UserController.update
 );
 privateRoute.patch('/api/users/change-password', UserController.changePassword);
+privateRoute.get('/api/users/sellers-nearby', UserController.getNearbySellers);
 
 // SELLER
 privateRoute.get('/api/sellers/profile', SellerController.get);

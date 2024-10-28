@@ -59,6 +59,21 @@ export type ChangePasswordRequest = {
   new_password: string;
 };
 
+export type NearbySellersResponse = {
+  _id: string;
+  name: string;
+  profile_picture_url?: string;
+  phone: string;
+  email: string;
+  address: Address;
+  operational_hours: {
+    open: string;
+    close: string;
+  };
+  rating: number;
+  reviews_count: number;
+};
+
 export function toUserResponse(user: any): GetUserResponse {
   return {
     id: user._id,

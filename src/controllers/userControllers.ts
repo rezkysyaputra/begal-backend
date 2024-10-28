@@ -1,5 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserRequest, LoginUserRequest } from '../types/userType';
+import {
+  CreateUserRequest,
+  LoginUserRequest,
+  NearbySellersResponse,
+} from '../types/userType';
 import { UserService } from '../services/userService';
 
 export class UserController {
@@ -67,6 +71,24 @@ export class UserController {
 
       res.status(200).json({
         message: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getNearbySellers(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = (req as any).user;
+      const result: NearbySellersResponse[] =
+        await UserService.getNearbySellers(user);
+
+      res.status(200).json({
+        data: result,
       });
     } catch (error) {
       next(error);

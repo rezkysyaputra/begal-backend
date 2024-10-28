@@ -11,10 +11,12 @@ import {
   toUserResponse,
   UpdateUserRequest,
   ChangePasswordRequest,
+  NearbySellersResponse,
 } from '../types/userType';
 import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
 import cloudinary from '../utils/cloudinary';
+import { SellerModel } from '../models/sellerModel';
 
 export class UserService {
   static async register(
@@ -162,5 +164,25 @@ export class UserService {
     await UserModel.findByIdAndUpdate(user.id, { password: newPassword });
 
     return 'Password berhasil diubah';
+  }
+
+  static async getNearbySellers(user: any): Promise<NearbySellersResponse[]> {
+    const userLocation = await UserModel.findOne({ _id: user.id });
+
+    if (!userLocation) {
+      throw new ResponseError(404, 'User tidak ditemukan');
+    }
+
+    const nearbySellers = await SellerModel.find({
+      'address.district': new RegExp(`^${userLocation.address.district}$`, 'i'),
+    }).select(
+      '_id name address operational_hours rating reviews_count profile_picture_url phone email'
+    );
+
+    if (nearbySellers.length === 0) {
+      throw new ResponseError(404, 'Toko terdekat tidak ditemukan');
+    }
+
+    return nearbySellers as NearbySellersResponse[];
   }
 }
