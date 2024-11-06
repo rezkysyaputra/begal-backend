@@ -92,4 +92,21 @@ export class UserController {
       next(error);
     }
   }
+
+  static async getProductsBySeller(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { sellerId } = req.params;
+      const result = await UserService.getProductsBySeller(sellerId);
+
+      res.status(200).json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

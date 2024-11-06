@@ -9,42 +9,40 @@ const privateRoute: Router = Router();
 privateRoute.use(authMiddleware);
 
 // USER
-privateRoute.get('/api/users/profile', UserController.get);
+privateRoute.get('/users/profile', UserController.get);
 privateRoute.patch(
-  '/api/users/profile',
+  '/users/profile',
   upload.single('image'),
   UserController.update
 );
-privateRoute.patch('/api/users/change-password', UserController.changePassword);
-privateRoute.get('/api/users/sellers-nearby', UserController.getNearbySellers);
+privateRoute.patch('/users/change-password', UserController.changePassword);
+privateRoute.get('/sellers/nearby', UserController.getNearbySellers);
+privateRoute.get(
+  '/products/seller/:sellerId',
+  UserController.getProductsBySeller
+);
 
 // SELLER
-privateRoute.get('/api/sellers/profile', SellerController.get);
+privateRoute.get('/sellers/profile', SellerController.get);
 privateRoute.patch(
-  '/api/sellers/profile',
+  '/sellers/profile',
   upload.single('image'),
   SellerController.update
 );
-privateRoute.patch(
-  '/api/sellers/change-password',
-  SellerController.changePassword
-);
+privateRoute.patch('/sellers/change-password', SellerController.changePassword);
 
 // PRODUCT
 privateRoute.post(
-  '/api/sellers/products',
+  '/sellers/products',
   upload.single('image'),
   ProductController.create
 );
-privateRoute.get('/api/sellers/products', ProductController.list);
+privateRoute.get('/sellers/products', ProductController.list);
 privateRoute.patch(
-  '/api/sellers/products/:productId',
+  '/sellers/products/:productId',
   upload.single('image'),
   ProductController.update
 );
-privateRoute.delete(
-  '/api/sellers/products/:productId',
-  ProductController.delete
-);
+privateRoute.delete('/sellers/products/:productId', ProductController.delete);
 
 export default privateRoute;

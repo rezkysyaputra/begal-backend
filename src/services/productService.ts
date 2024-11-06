@@ -10,36 +10,35 @@ import {
 import cloudinary from '../utils/cloudinary';
 import { ProductValidation } from '../validations/productValidation';
 import { Validation } from '../validations/validation';
+import { extractPublicId } from '../helpers/extractPublicId';
 
 export class ProductService {
   static async create(
-    user: any,
+    user: { id: string },
     request: CreateProductRequest,
-    image: any
+    image?: Express.Multer.File
   ): Promise<ProductResponse> {
     const validatedData = Validation.validate(
       ProductValidation.CREATE,
       request
     );
 
-    const name = await ProductModel.findOne({ name: validatedData.name });
-
-    if (name) {
+    const nameExists = await ProductModel.exists({ name: validatedData.name });
+    if (nameExists) {
       throw new ResponseError(400, 'Nama sudah terdaftar');
     }
 
     let imageUrl: string | null = null;
 
     if (image) {
-      const uploadResult = cloudinary.uploader.upload_stream(
-        { folder: 'uploads' },
-        (error, result) => {
-          if (error) throw new ResponseError(409, 'Upload failed');
-
-          imageUrl = result!.secure_url;
-        }
-      );
-      image.stream.pipe(uploadResult);
+      imageUrl = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: 'uploads' }, (error, result) => {
+            if (error) reject(new ResponseError(409, 'Upload failed'));
+            else resolve(result?.secure_url || null);
+          })
+          .end(image.buffer);
+      });
     }
 
     const data = {
@@ -49,24 +48,18 @@ export class ProductService {
     };
 
     const product = await ProductModel.create(data);
-
     return toProductResponse(product);
   }
 
-  static async list(user: any): Promise<ProductResponse[]> {
+  static async list(user: { id: string }): Promise<ProductResponse[]> {
     const products = await ProductModel.find({ seller_id: user.id });
-
-    if (!products) {
-      throw new ResponseError(404, 'Produk tidak ditemukan');
-    }
-
     return products.map((product) => toProductResponse(product));
   }
 
   static async update(
-    user: any,
+    user: { id: string },
     request: UpdateProductRequest,
-    image: any
+    image?: Express.Multer.File
   ): Promise<ProductResponse> {
     const validatedData = Validation.validate(
       ProductValidation.UPDATE,
@@ -77,18 +70,27 @@ export class ProductService {
       throw new ResponseError(400, 'Produk tidak ditemukan');
     }
 
+    const existingProduct = await ProductModel.findById(request.id);
+    if (!existingProduct) {
+      throw new ResponseError(404, 'Produk tidak ditemukan');
+    }
+
     let imageUrl: string | null = null;
 
     if (image) {
-      const uploadResult = cloudinary.uploader.upload_stream(
-        { folder: 'uploads' },
-        (error, result) => {
-          if (error) throw new ResponseError(409, 'Upload failed');
+      if (existingProduct.image_url) {
+        const publicId: string = extractPublicId(existingProduct.image_url);
+        await cloudinary.uploader.destroy(publicId);
+      }
 
-          imageUrl = result!.secure_url;
-        }
-      );
-      image.stream.pipe(uploadResult);
+      imageUrl = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: 'uploads' }, (error, result) => {
+            if (error) reject(new ResponseError(409, 'Upload failed'));
+            else resolve(result?.secure_url || null);
+          })
+          .end(image.buffer);
+      });
     }
 
     const data = {
@@ -97,7 +99,7 @@ export class ProductService {
     };
 
     const product = await ProductModel.findByIdAndUpdate(
-      { _id: validatedData.id, seller_id: user.id },
+      validatedData.id,
       data,
       { new: true }
     );
@@ -109,7 +111,7 @@ export class ProductService {
     return toProductResponse(product);
   }
 
-  static async delete(user: any, id: string): Promise<string> {
+  static async delete(user: { id: string }, id: string): Promise<string> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new ResponseError(400, 'Produk tidak ditemukan');
     }
@@ -123,6 +125,11 @@ export class ProductService {
       throw new ResponseError(404, 'Produk tidak ditemukan');
     }
 
-    return 'Produk berhasil di hapus';
+    if (product.image_url) {
+      const publicId: string = extractPublicId(product.image_url);
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    return 'Produk berhasil dihapus';
   }
 }

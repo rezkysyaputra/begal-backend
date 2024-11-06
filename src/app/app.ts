@@ -24,11 +24,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Swagger docs
 // const swaggerSpec = swaggerJsDoc(swaggerOptions);
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));j
 
 // Routes
-app.use(publicRoute);
-app.use(privateRoute);
+app.use('/api', publicRoute);
+app.use('/api', privateRoute);
 
 // error Middleware
 app.use(errorLogger);

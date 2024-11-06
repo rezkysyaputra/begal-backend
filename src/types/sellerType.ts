@@ -71,6 +71,11 @@ export type ChangePasswordRequest = {
   new_password: string;
 };
 
+export type SearchSellerRequest = {
+  name?: string;
+  
+}
+
 export function toSellerResponse(seller: any): GetSellerResponse {
   return {
     id: seller._id,

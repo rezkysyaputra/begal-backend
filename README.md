@@ -1,7 +1,12 @@
 ## Cara install
 
-1. git clone https://github.com/rezkysyaputra/begal-backend
-2. npm i
+```bash
+git clone https://github.com/rezkysyaputra/begal-backend
+```
+
+```bash
+npm install
+```
 
 ## Buat file .env, dalam file .env buat variabel:
 
@@ -12,4 +17,6 @@
 
 ## Running:
 
-- npm run dev
+```bash
+npm run dev
+```

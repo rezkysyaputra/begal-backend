@@ -25,6 +25,8 @@ export type UpdateProductRequest = {
   image_url?: string;
 };
 
+
+
 export const toProductResponse = (product: any): ProductResponse => {
   return {
     id: product._id,

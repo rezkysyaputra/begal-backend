@@ -17,159 +17,157 @@ import { SellerValidation } from '../validations/sellerValidation';
 import { SellerModel } from '../models/sellerModel';
 
 export class SellerService {
+  /**
+   * Register a new seller account.
+   */
   static async register(
     request: CreateSellerRequest,
-    image: any
+    image?: Express.Multer.File
   ): Promise<CreateSellerResponse> {
     const validatedData = Validation.validate(
       SellerValidation.REGISTER,
       request
     );
 
-    const name = await SellerModel.findOne({ name: validatedData.name });
+    // Check if name or email already exists
+    const existingName = await SellerModel.exists({ name: validatedData.name });
+    if (existingName) throw new ResponseError(400, 'Nama sudah terdaftar');
 
-    if (name) {
-      throw new ResponseError(400, 'Nama sudah terdaftar');
-    }
+    const existingEmail = await SellerModel.exists({
+      email: validatedData.email,
+    });
+    if (existingEmail) throw new ResponseError(400, 'Email sudah terdaftar');
 
-    const email = await SellerModel.findOne({ email: validatedData.email });
-
-    if (email) {
-      throw new ResponseError(400, 'Email sudah terdaftar');
-    }
-
+    // Hash password for security
     validatedData.password = await bcrypt.hash(validatedData.password, 10);
 
+    // Upload profile picture to Cloudinary if provided
     let profilePictureUrl: string | null = null;
     if (image) {
-      const uploadResult = cloudinary.uploader.upload_stream(
-        { folder: 'uploads' },
-        (error, result) => {
-          if (error) throw new ResponseError(409, 'Upload failed');
-
-          profilePictureUrl = result!.secure_url;
-        }
-      );
-      image.stream.pipe(uploadResult);
+      profilePictureUrl = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: 'uploads' }, (error, result) => {
+            if (error) reject(new ResponseError(409, 'Upload gambar gagal'));
+            else resolve(result?.secure_url || null);
+          })
+          .end(image.buffer);
+      });
     }
 
-    const newUser = await SellerModel.create({
+    // Create new seller in database
+    const newSeller = await SellerModel.create({
       ...validatedData,
       profile_picture_url: profilePictureUrl,
     });
 
     return {
-      name: newUser.name,
-      role: newUser.role,
+      name: newSeller.name,
+      role: newSeller.role,
     };
   }
 
+  /**
+   * Login an existing seller.
+   */
   static async login(
     request: LoginSellerRequest
   ): Promise<LoginSellerResponse> {
     const loginData = Validation.validate(SellerValidation.LOGIN, request);
 
-    const user = await SellerModel.findOne({ email: loginData.email });
+    // Find seller by email
+    const seller = await SellerModel.findOne({ email: loginData.email });
+    if (!seller) throw new ResponseError(400, 'Email atau password salah');
 
-    if (!user) {
-      throw new ResponseError(400, 'Email atau password salah');
-    }
-
+    // Verify password
     const isPasswordMatch = await bcrypt.compare(
       loginData.password,
-      user.password
+      seller.password
     );
-
-    if (!isPasswordMatch) {
+    if (!isPasswordMatch)
       throw new ResponseError(400, 'Email atau password salah');
-    }
 
+    // Generate JWT token
     const payloadJwtToken = {
-      id: user._id as string,
-      name: user.name,
-      role: user.role,
+      id: seller._id as string,
+      name: seller.name,
+      role: seller.role,
     };
 
     const token = CreateJwtToken(payloadJwtToken);
-
     return token;
   }
 
-  static async get(user: any): Promise<GetSellerResponse> {
-    const getUser = await SellerModel.findById(user.id);
+  /**
+   * Retrieve seller information.
+   */
+  static async get(seller: { id: string }): Promise<GetSellerResponse> {
+    const foundSeller = await SellerModel.findById(seller.id);
+    if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
-    if (!getUser) {
-      throw new ResponseError(404, 'User tidak ditemukan');
-    }
-
-    return toSellerResponse(getUser);
+    return toSellerResponse(foundSeller);
   }
 
+  /**
+   * Update seller information.
+   */
   static async update(
-    user: any,
+    seller: { id: string },
     request: UpdateSellerRequest
   ): Promise<GetSellerResponse> {
     const newData = Validation.validate(SellerValidation.UPDATE, request);
 
-    // Ambil data pengguna yang sudah ada
-    const existingData = await SellerModel.findById(user.id);
-    if (!existingData) {
-      throw new ResponseError(404, 'User tidak ditemukan');
-    }
+    // Retrieve existing data
+    const existingData = await SellerModel.findById(seller.id);
+    if (!existingData) throw new ResponseError(404, 'Seller tidak ditemukan');
 
-    // Gabungkan data lama dengan data baru
+    // Merge address and operational_hours fields to keep existing data
     const mergedData = {
-      ...existingData.toObject(),
       ...newData,
-      operational_hours: {
-        ...existingData.operational_hours,
-        ...newData.operational_hours,
-      },
       address: {
         ...existingData.address,
         ...newData.address,
       },
+      operational_hours: {
+        ...existingData.operational_hours,
+        ...newData.operational_hours,
+      },
     };
 
-    // Lakukan update dengan $set
+    // Update seller in database
     const updatedSeller = await SellerModel.findByIdAndUpdate(
-      user.id,
+      seller.id,
       { $set: mergedData },
       { new: true }
     );
 
-    if (!updatedSeller) {
-      throw new ResponseError(404, 'User tidak ditemukan');
-    }
+    if (!updatedSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
     return toSellerResponse(updatedSeller);
   }
 
+  /**
+   * Change seller's password.
+   */
   static async changePassword(
-    user: any,
+    seller: { id: string },
     request: ChangePasswordRequest
   ): Promise<string> {
     const data = Validation.validate(SellerValidation.CHANGE_PASSWORD, request);
 
-    // Check old password
-    const getUser = await SellerModel.findById(user.id);
+    // Find seller by ID
+    const foundSeller = await SellerModel.findById(seller.id);
+    if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
-    if (!getUser) {
-      throw new ResponseError(404, 'User tidak ditemukan');
-    }
-
+    // Verify old password
     const isPasswordMatch = await bcrypt.compare(
       data.old_password,
-      getUser.password
+      foundSeller.password
     );
+    if (!isPasswordMatch) throw new ResponseError(400, 'Password lama salah');
 
-    if (!isPasswordMatch) {
-      throw new ResponseError(400, 'Password lama salah');
-    }
-
+    // Hash new password and update
     const newPassword = await bcrypt.hash(data.new_password, 10);
-
-    await SellerModel.findByIdAndUpdate(user.id, { password: newPassword });
+    await SellerModel.findByIdAndUpdate(seller.id, { password: newPassword });
 
     return 'Password berhasil diubah';
   }

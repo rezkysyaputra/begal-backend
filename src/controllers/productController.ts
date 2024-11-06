@@ -10,12 +10,17 @@ export class ProductController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      const request: CreateProductRequest = req.body;
       const image = req.file;
+      const data = req.body;
+      const product: CreateProductRequest = {
+        ...data,
+        price: Number(data.price),
+        stock: Number(data.stock),
+      };
 
       const result: ProductResponse = await ProductService.create(
         user,
-        request,
+        product,
         image
       );
 
@@ -43,13 +48,20 @@ export class ProductController {
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
-      const request: UpdateProductRequest = req.body;
-      request.id = req.params.productId;
       const image = req.file;
+      const data = req.body;
+
+      if (data.price) data.price = Number(data.price);
+      if (data.stock) data.stock = Number(data.stock);
+
+      const product: UpdateProductRequest = {
+        ...data,
+        id: req.params.productId,
+      };
 
       const result: ProductResponse = await ProductService.update(
         user,
-        request,
+        product,
         image
       );
 
