@@ -15,6 +15,7 @@ import {
 import { ChangePasswordRequest } from '../types/userType';
 import { SellerValidation } from '../validations/sellerValidation';
 import { SellerModel } from '../models/sellerModel';
+import { extractPublicId } from '../helpers/extractPublicId';
 
 export class SellerService {
   /**
@@ -112,13 +113,32 @@ export class SellerService {
    */
   static async update(
     seller: { id: string },
-    request: UpdateSellerRequest
+    request: UpdateSellerRequest,
+    image?: Express.Multer.File
   ): Promise<GetSellerResponse> {
     const newData = Validation.validate(SellerValidation.UPDATE, request);
 
     // Retrieve existing data
     const existingData = await SellerModel.findById(seller.id);
     if (!existingData) throw new ResponseError(404, 'Seller tidak ditemukan');
+
+    let profilePictureUrl: string | null = null;
+
+    if (image) {
+      if (existingData.profile_picture_url) {
+        const publicId = extractPublicId(existingData.profile_picture_url);
+        await cloudinary.uploader.destroy(publicId);
+      }
+
+      profilePictureUrl = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: 'uploads' }, (error, result) => {
+            if (error) reject(new ResponseError(409, 'Upload gambar gagal'));
+            else resolve(result?.secure_url || null);
+          })
+          .end(image.buffer);
+      });
+    }
 
     // Merge address and operational_hours fields to keep existing data
     const mergedData = {
@@ -131,6 +151,8 @@ export class SellerService {
         ...existingData.operational_hours,
         ...newData.operational_hours,
       },
+      profile_picture_url:
+        profilePictureUrl ?? existingData.profile_picture_url,
     };
 
     // Update seller in database

@@ -21,6 +21,7 @@ privateRoute.get(
   '/products/seller/:sellerId',
   UserController.getProductsBySeller
 );
+privateRoute.get('/products/search/', UserController.searchProducts);
 
 // SELLER
 privateRoute.get('/sellers/profile', SellerController.get);

@@ -47,8 +47,9 @@ export class SellerController {
     try {
       const user = (req as any).user;
       const request = req.body;
+      const image = req.file;
 
-      const result = await SellerService.update(user, request);
+      const result = await SellerService.update(user, request, image);
 
       res.status(200).json({
         data: result,

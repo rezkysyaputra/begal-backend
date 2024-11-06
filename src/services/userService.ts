@@ -19,7 +19,7 @@ import { extractPublicId } from '../helpers/extractPublicId';
 import { SellerModel } from '../models/sellerModel';
 import { GetSellerResponse, toSellerResponse } from '../types/sellerType';
 import { ProductModel } from '../models/productModel';
-import { toProductResponse } from '../types/productType';
+import { ProductResponse, toProductResponse } from '../types/productType';
 import mongoose from 'mongoose';
 
 export class UserService {
@@ -198,5 +198,14 @@ export class UserService {
       name: seller.name,
       products: products.map((product) => toProductResponse(product)),
     };
+  }
+
+  static async searchProducts(keyword: string): Promise<ProductResponse[]> {
+    const products = await ProductModel.find({
+      name: { $regex: keyword, $options: 'i' },
+    });
+    if (!products) throw new ResponseError(404, 'Produk tidak ditemukan');
+
+    return products.map((product) => toProductResponse(product));
   }
 }

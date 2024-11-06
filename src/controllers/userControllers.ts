@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { CreateUserRequest, LoginUserRequest } from '../types/userType';
 import { UserService } from '../services/userService';
 import { GetSellerResponse } from '../types/sellerType';
+import { ProductResponse } from '../types/productType';
 
 export class UserController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -48,8 +49,9 @@ export class UserController {
     try {
       const user = (req as any).user;
       const request = req.body;
+      const image = req.file;
 
-      const result = await UserService.update(user, request);
+      const result = await UserService.update(user, request, image);
 
       res.status(200).json({
         data: result,
@@ -101,6 +103,23 @@ export class UserController {
     try {
       const { sellerId } = req.params;
       const result = await UserService.getProductsBySeller(sellerId);
+
+      res.status(200).json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // search products
+  static async searchProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { keyword = '' } = req.query;
+
+      const result: ProductResponse[] = await UserService.searchProducts(
+        keyword as string
+      );
 
       res.status(200).json({
         data: result,
