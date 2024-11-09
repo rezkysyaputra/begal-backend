@@ -56,6 +56,16 @@ export class ProductService {
     return products.map((product) => toProductResponse(product));
   }
 
+  static async get(id: string): Promise<ProductResponse> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new ResponseError(400, 'Produk tidak ditemukan');
+    }
+
+    const product = await ProductModel.findById(id);
+    if (!product) throw new ResponseError(404, 'Produk tidak ditemukan');
+    return toProductResponse(product);
+  }
+
   static async update(
     user: { id: string },
     request: UpdateProductRequest,
@@ -70,7 +80,10 @@ export class ProductService {
       throw new ResponseError(400, 'Produk tidak ditemukan');
     }
 
-    const existingProduct = await ProductModel.findById(request.id);
+    const existingProduct = await ProductModel.findById({
+      _id: request.id,
+      seller_id: user.id,
+    });
     if (!existingProduct) {
       throw new ResponseError(404, 'Produk tidak ditemukan');
     }

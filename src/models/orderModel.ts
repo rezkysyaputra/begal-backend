@@ -22,10 +22,12 @@ interface Order extends Document {
   delivery_address: Address;
   total_price: number;
   payment_method: 'transfer' | 'cash';
+  payment_status: 'pending' | 'success' | 'failed';
+  transaction_id: string; // ID transaksi dari Midtrans
+  payment_code?: string; // Kode pembayaran jika menggunakan metode manual
+  payment_response?: Record<string, any>; // Respons lengkap dari Midtrans
+  payment_expiry?: Date; // Waktu kadaluarsa pembayaran
   status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
-  order_date: Date;
-  delivery_date: Date;
-  updated_at: Date;
 }
 
 const addressSchema = new Schema<Address>({
@@ -55,14 +57,20 @@ const orderSchema = new Schema<Order>(
       enum: ['transfer', 'cash'],
       required: true,
     },
+    payment_status: {
+      type: String,
+      enum: ['pending', 'success', 'failed'],
+      default: 'pending',
+    },
+    transaction_id: { type: String, required: false }, // ID transaksi
+    payment_code: { type: String }, // Kode pembayaran (opsional)
+    payment_response: { type: Schema.Types.Mixed }, // Respons pembayaran
+    payment_expiry: { type: Date }, // Kadaluarsa pembayaran
     status: {
       type: String,
       enum: ['pending', 'confirmed', 'delivered', 'cancelled'],
       default: 'pending',
     },
-    order_date: { type: Date, default: Date.now },
-    delivery_date: { type: Date },
-    updated_at: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

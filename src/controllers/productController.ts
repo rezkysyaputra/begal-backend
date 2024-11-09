@@ -45,6 +45,19 @@ export class ProductController {
     }
   }
 
+  static async get(req: Request, res: Response, next: NextFunction) {
+    try {
+      const productId = req.params.productId;
+      const result: ProductResponse = await ProductService.get(productId);
+
+      res.status(200).json({
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;

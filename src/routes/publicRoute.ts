@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { UserController } from '../controllers/userControllers';
+import { UserController } from '../controllers/userController';
 import upload from '../middlewares/uploadMiddleware';
 import { SellerController } from '../controllers/sellerController';
+import { MidtransCallbackController } from '../controllers/midtransCallbackController';
 
 const publicRoute: Router = Router();
 
@@ -20,5 +21,11 @@ publicRoute.post(
   SellerController.register
 );
 publicRoute.post('/sellers/login', SellerController.login);
+
+// MIDTRANS
+publicRoute.get(
+  '/midtrans/callback',
+  MidtransCallbackController.handleCallback
+);
 
 export default publicRoute;

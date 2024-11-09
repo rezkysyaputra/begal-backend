@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 export const authMiddleware = (
   req: Request,
@@ -28,4 +28,16 @@ export const authMiddleware = (
   res.status(401).json({
     errors: 'Unauthorized',
   });
+};
+
+export const roleAuthorization = (roles: string[]): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const userRole = (req as any).user.role;
+
+    if (!userRole || !roles.includes(userRole)) {
+      res.status(403).json({ message: 'Akses ditolak' });
+      return;
+    }
+    next();
+  };
 };

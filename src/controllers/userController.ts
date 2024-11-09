@@ -112,7 +112,6 @@ export class UserController {
     }
   }
 
-  // search products
   static async searchProducts(req: Request, res: Response, next: NextFunction) {
     try {
       const { keyword = '' } = req.query;

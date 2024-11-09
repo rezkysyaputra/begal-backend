@@ -204,7 +204,9 @@ export class UserService {
     const products = await ProductModel.find({
       name: { $regex: keyword, $options: 'i' },
     });
-    if (!products) throw new ResponseError(404, 'Produk tidak ditemukan');
+
+    if (!products.length)
+      throw new ResponseError(404, 'Produk tidak ditemukan');
 
     return products.map((product) => toProductResponse(product));
   }

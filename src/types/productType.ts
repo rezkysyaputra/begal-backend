@@ -14,6 +14,8 @@ export type ProductResponse = {
   price: number;
   stock: number;
   image_url: string;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type UpdateProductRequest = {
@@ -25,8 +27,6 @@ export type UpdateProductRequest = {
   image_url?: string;
 };
 
-
-
 export const toProductResponse = (product: any): ProductResponse => {
   return {
     id: product._id,
@@ -36,5 +36,7 @@ export const toProductResponse = (product: any): ProductResponse => {
     price: product.price,
     stock: product.stock,
     image_url: product.image_url,
+    created_at: product.createdAt,
+    updated_at: product.updatedAt,
   };
 };
