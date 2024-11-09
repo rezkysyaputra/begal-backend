@@ -7,7 +7,6 @@ export class OrderValidation {
       z.object({
         product_id: z.string().min(1).max(255),
         quantity: z.number().min(1),
-        price: z.number().min(1),
       })
     ),
     payment_method: z.enum(['transfer', 'cash']),

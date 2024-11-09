@@ -28,7 +28,7 @@ export class OrderService {
     const matchUser = await UserModel.findById(user.id);
     if (!matchUser) throw new ResponseError(404, 'User tidak ditemukan');
 
-    // Validasi dan proses order
+    // Validasi dan ambil detail produk
     const products = await ProductModel.find({
       _id: {
         $in: orderData.products.map(
@@ -41,8 +41,23 @@ export class OrderService {
       throw new ResponseError(400, 'Beberapa produk tidak ditemukan');
     }
 
+    // Menambahkan detail nama dan gambar untuk tiap produk
+    const detailedProducts = orderData.products.map((orderProduct: any) => {
+      const product = products.find(
+        (p) => (p._id as string).toString() === orderProduct.product_id
+      );
+      if (!product) throw new ResponseError(400, 'Produk tidak ditemukan');
+      return {
+        product_id: product._id,
+        name: product.name,
+        quantity: orderProduct.quantity,
+        price: product.price,
+        image_url: product.image_url ?? null,
+      };
+    });
+
     // Hitung total harga
-    const totalPrice: number = orderData.products.reduce(
+    const totalPrice: number = detailedProducts.reduce(
       (total: number, product: any) => total + product.price * product.quantity,
       0
     );
@@ -51,7 +66,7 @@ export class OrderService {
     const order = await OrderModel.create({
       user_id: user.id,
       seller_id: orderData.seller_id,
-      products: orderData.products,
+      products: detailedProducts, // Gunakan produk dengan nama dan gambar
       delivery_address: matchUser.address,
       total_price: totalPrice,
       payment_method: orderData.payment_method,
@@ -66,6 +81,7 @@ export class OrderService {
         payment_method: order.payment_method,
       };
     }
+
     // Lakukan integrasi dengan Midtrans untuk pembayaran
     let paymentData: any;
     try {
@@ -88,17 +104,22 @@ export class OrderService {
     };
   }
 
-  static async list(user: { id: string }): Promise<Order[]> {
-    const orders = await OrderModel.find({ user_id: user.id });
+  static async list(user: { id: string; role: string }): Promise<Order[]> {
+    const filterId = user.role === 'user' ? 'user_id' : 'seller_id';
+    const orders = await OrderModel.find({ [filterId]: user.id });
     return orders.map((order) => toOrderResponse(order));
   }
 
-  static async get(user: { id: string }, id: string): Promise<Order> {
+  static async get(
+    user: { id: string; role: string },
+    id: string
+  ): Promise<Order> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new ResponseError(400, 'Order tidak ditemukan');
     }
 
-    const order = await OrderModel.findById({ _id: id, user_id: user.id });
+    const filterId = user.role === 'user' ? 'user_id' : 'seller_id';
+    const order = await OrderModel.findById({ _id: id, [filterId]: user.id });
     if (!order) throw new ResponseError(404, 'Order tidak ditemukan');
     return toOrderResponse(order);
   }
@@ -112,7 +133,7 @@ export class OrderService {
       throw new ResponseError(400, 'Order tidak ditemukan');
     }
 
-    const order = await OrderModel.findById({ _id: id, user_id: user.id });
+    const order = await OrderModel.findById({ _id: id, seller_id: user.id });
     if (!order) throw new ResponseError(404, 'Order tidak ditemukan');
 
     order.status = status;

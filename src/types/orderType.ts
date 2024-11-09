@@ -7,6 +7,8 @@ export type CreateOrderResponse = {
 
 type OrderProduct = {
   product_id: string;
+  name: string;
+  image_url?: string;
   quantity: number;
   price: number;
 };

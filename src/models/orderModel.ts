@@ -11,6 +11,8 @@ interface Address {
 
 interface OrderProduct {
   product_id: Schema.Types.ObjectId;
+  name: string;
+  image_url?: string;
   quantity: number;
   price: number;
 }
@@ -41,6 +43,8 @@ const addressSchema = new Schema<Address>({
 
 const orderProductSchema = new Schema<OrderProduct>({
   product_id: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  name: { type: String, required: true },
+  image_url: { type: String, required: false },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
 });
