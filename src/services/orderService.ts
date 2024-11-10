@@ -18,7 +18,6 @@ export class OrderService {
     user: { id: string },
     data: any
   ): Promise<CreateOrderResponse> {
-    // Validasi order
     const orderData = Validation.validate(OrderValidation.CREATE, data);
 
     if (!mongoose.Types.ObjectId.isValid(orderData.seller_id)) {
@@ -28,80 +27,116 @@ export class OrderService {
     const matchUser = await UserModel.findById(user.id);
     if (!matchUser) throw new ResponseError(404, 'User tidak ditemukan');
 
-    // Validasi dan ambil detail produk
-    const products = await ProductModel.find({
-      _id: {
-        $in: orderData.products.map(
-          (product: { product_id: string }) => product.product_id
-        ),
-      },
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    let transactionSuccessful = false;
 
-    if (products.length !== orderData.products.length) {
-      throw new ResponseError(400, 'Beberapa produk tidak ditemukan');
-    }
-
-    // Menambahkan detail nama dan gambar untuk tiap produk
-    const detailedProducts = orderData.products.map((orderProduct: any) => {
-      const product = products.find(
-        (p) => (p._id as string).toString() === orderProduct.product_id
-      );
-      if (!product) throw new ResponseError(400, 'Produk tidak ditemukan');
-      return {
-        product_id: product._id,
-        name: product.name,
-        quantity: orderProduct.quantity,
-        price: product.price,
-        image_url: product.image_url ?? null,
-      };
-    });
-
-    // Hitung total harga
-    const totalPrice: number = detailedProducts.reduce(
-      (total: number, product: any) => total + product.price * product.quantity,
-      0
-    );
-
-    // Simpan order sementara dengan status 'pending'
-    const order = await OrderModel.create({
-      user_id: user.id,
-      seller_id: orderData.seller_id,
-      products: detailedProducts, // Gunakan produk dengan nama dan gambar
-      delivery_address: matchUser.address,
-      total_price: totalPrice,
-      payment_method: orderData.payment_method,
-      payment_status: 'pending',
-      transaction_id: '', // Transaction ID dari Midtrans akan ditambahkan nanti
-      status: 'pending',
-    });
-
-    if (orderData.payment_method === 'cash') {
-      return {
-        order_id: (order._id as string).toString(),
-        payment_method: order.payment_method,
-      };
-    }
-
-    // Lakukan integrasi dengan Midtrans untuk pembayaran
-    let paymentData: any;
     try {
-      paymentData = await MidtransService.createTransaction(order); // Menghubungi Midtrans
+      const productIds = orderData.products.map(
+        (product: { product_id: string }) => product.product_id
+      );
+      const products = await ProductModel.find({
+        _id: { $in: productIds },
+      }).session(session);
+
+      if (products.length !== orderData.products.length) {
+        throw new ResponseError(400, 'Beberapa produk tidak ditemukan');
+      }
+
+      // Cek stok untuk semua produk terlebih dahulu
+      orderData.products.forEach((orderProduct: any) => {
+        const product = products.find(
+          (p) => (p._id as string).toString() === orderProduct.product_id
+        );
+        if (!product) {
+          throw new ResponseError(400, 'Produk tidak ditemukan');
+        }
+        if (product.stock < orderProduct.quantity) {
+          throw new ResponseError(
+            400,
+            `Stok tidak mencukupi untuk produk ${product.name}`
+          );
+        }
+      });
+
+      // Jika stok cukup, lanjutkan mengurangi stok
+      const detailedProducts = orderData.products.map((orderProduct: any) => {
+        const product = products.find(
+          (p) => (p._id as string).toString() === orderProduct.product_id
+        )!;
+        product.stock -= orderProduct.quantity;
+        product.save({ session });
+
+        return {
+          product_id: product._id,
+          name: product.name,
+          quantity: orderProduct.quantity,
+          price: product.price,
+          image_url: product.image_url ?? null,
+        };
+      });
+
+      const totalPrice: number = detailedProducts.reduce(
+        (total: number, product: any) =>
+          total + product.price * product.quantity,
+        0
+      );
+
+      const order = await OrderModel.create(
+        [
+          {
+            user_id: user.id,
+            seller_id: orderData.seller_id,
+            products: detailedProducts,
+            delivery_address: matchUser.address,
+            total_price: totalPrice,
+            payment_method: orderData.payment_method,
+            payment_status: 'pending',
+            transaction_id: '',
+            status: 'pending',
+          },
+        ],
+        { session }
+      );
+
+      if (orderData.payment_method === 'cash') {
+        await session.commitTransaction();
+        transactionSuccessful = true;
+        return {
+          order_id: (order[0]._id as string).toString(),
+          payment_method: order[0].payment_method,
+        };
+      }
+
+      let paymentData: any;
+      try {
+        paymentData = await MidtransService.createTransaction(order[0]);
+      } catch (error) {
+        throw new ResponseError(500, 'Transaksi pembayaran gagal dilakukan');
+      }
+
+      order[0].transaction_id = paymentData.transaction_id;
+      order[0].payment_response = paymentData;
+      order[0].payment_expiry = paymentData.expiry_time;
+      await order[0].save({ session });
+
+      await session.commitTransaction();
+      transactionSuccessful = true;
+
+      return {
+        order_id: order[0]._id as string,
+        token: paymentData.token,
+        redirect_url: paymentData.redirect_url,
+        payment_method: order[0].payment_method,
+      };
     } catch (error) {
-      throw new ResponseError(500, 'Transaksi pembayaran gagal dilakukan');
+      if (!transactionSuccessful) {
+        await session.abortTransaction();
+      }
+      throw error;
+    } finally {
+      session.endSession();
     }
-
-    // Update Order dengan informasi dari Midtrans
-    order.transaction_id = paymentData.transaction_id;
-    order.payment_response = paymentData; // Simpan seluruh respons dari Midtrans
-    order.payment_expiry = paymentData.expiry_time; // Kadaluarsa pembayaran
-    await order.save();
-
-    return {
-      order_id: order._id as string,
-      token: paymentData.token,
-      redirect_url: paymentData.redirect_url,
-      payment_method: order.payment_method,
-    };
   }
 
   static async list(user: { id: string; role: string }): Promise<Order[]> {
