@@ -10,6 +10,8 @@ export class MidtransCallbackController {
     const { order_id, transaction_status, expiry_time, transaction_id } =
       req.body;
 
+    console.log(req.body);
+
     // Temukan order berdasarkan order_id
     const order = await OrderModel.findById(order_id);
     if (!order) {
