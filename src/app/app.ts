@@ -27,6 +27,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));j
 
 // Routes
+app.get('/', (req, res) => {
+  res.send('BELI GALON API');
+});
 app.use('/api', publicRoute);
 app.use('/api', privateRoute);
 
