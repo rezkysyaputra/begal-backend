@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { UserModel } from '../models/userModel';
+import ResponseError from '../helpers/responseError';
 
 export class MidtransService {
   static async createTransaction(order: any): Promise<any> {
     if (!order) {
-      throw new Error('Order tidak ditemukan');
+      throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
     const midtransAPI = process.env.MIDTRANS_APP_URL as string; // API Midtrans untuk membuat transaksi
@@ -17,7 +18,7 @@ export class MidtransService {
     const user = await UserModel.findById(order.user_id);
 
     if (!user) {
-      throw new Error('User tidak ditemukan');
+      throw new ResponseError(404, 'User tidak ditemukan');
     }
 
     const payload = {

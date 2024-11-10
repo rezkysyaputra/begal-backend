@@ -7,13 +7,8 @@ export class MidtransCallbackController {
     res: Response,
     next: NextFunction
   ): Promise<void> {
-    const {
-      order_id,
-      transaction_status,
-      payment_type,
-      transaction_id,
-      fraud_status,
-    } = req.body;
+    const { order_id, transaction_status, expiry_time, transaction_id } =
+      req.body;
 
     // Temukan order berdasarkan order_id
     const order = await OrderModel.findOne({ transaction_id: order_id });
@@ -34,6 +29,8 @@ export class MidtransCallbackController {
       order.payment_status = 'failed';
     }
 
+    order.transaction_id = transaction_id;
+    order.payment_expiry = expiry_time;
     order.payment_response = req.body; // Simpan respons lengkap dari Midtrans
     await order.save();
 

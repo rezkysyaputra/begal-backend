@@ -115,9 +115,7 @@ export class OrderService {
         throw new ResponseError(500, 'Transaksi pembayaran gagal dilakukan');
       }
 
-      order[0].transaction_id = paymentData.transaction_id;
       order[0].payment_response = paymentData;
-      order[0].payment_expiry = paymentData.expiry_time;
       await order[0].save({ session });
 
       await session.commitTransaction();
