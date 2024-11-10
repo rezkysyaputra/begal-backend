@@ -23,7 +23,7 @@ publicRoute.post(
 publicRoute.post('/sellers/login', SellerController.login);
 
 // MIDTRANS
-publicRoute.get(
+publicRoute.post(
   '/midtrans/callback',
   MidtransCallbackController.handleCallback
 );

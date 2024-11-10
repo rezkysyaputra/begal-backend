@@ -13,7 +13,7 @@ export class MidtransCallbackController {
     // Temukan order berdasarkan order_id
     const order = await OrderModel.findOne({ _id: order_id });
     if (!order) {
-      res.status(404).json({ message: 'Order not found', data: req.body });
+      res.status(404).json({ message: 'Order not found' });
       return;
     }
 
@@ -34,8 +34,6 @@ export class MidtransCallbackController {
     order.payment_response = req.body; // Simpan respons lengkap dari Midtrans
     await order.save();
 
-    res
-      .status(200)
-      .json({ message: 'Payment status updated successfully', data: req.body });
+    res.status(200).json({ message: 'Payment status updated successfully' });
   }
 }
