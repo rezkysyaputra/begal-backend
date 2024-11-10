@@ -10,6 +10,7 @@ export class SellerController {
       const result = await SellerService.register(request, image);
 
       res.status(201).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -23,6 +24,7 @@ export class SellerController {
       const result = await SellerService.login(request);
 
       res.status(200).json({
+        success: true,
         token: result,
       });
     } catch (error) {
@@ -36,6 +38,7 @@ export class SellerController {
       const result = await SellerService.get(user);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -52,6 +55,7 @@ export class SellerController {
       const result = await SellerService.update(user, request, image);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -67,6 +71,7 @@ export class SellerController {
       const result = await SellerService.changePassword(user, request);
 
       res.status(200).json({
+        success: true,
         message: result,
       });
     } catch (error) {

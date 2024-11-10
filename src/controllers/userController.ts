@@ -12,6 +12,7 @@ export class UserController {
       const result = await UserService.register(request, image);
 
       res.status(201).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -25,6 +26,7 @@ export class UserController {
       const result = await UserService.login(request);
 
       res.status(200).json({
+        success: true,
         token: result,
       });
     } catch (error) {
@@ -38,6 +40,7 @@ export class UserController {
       const result = await UserService.get(user);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -54,6 +57,7 @@ export class UserController {
       const result = await UserService.update(user, request, image);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -69,6 +73,7 @@ export class UserController {
       const result = await UserService.changePassword(user, request);
 
       res.status(200).json({
+        success: true,
         message: result,
       });
     } catch (error) {
@@ -88,6 +93,7 @@ export class UserController {
       );
 
       res.status(200).json({
+        status: true,
         data: result,
       });
     } catch (error) {
@@ -105,6 +111,7 @@ export class UserController {
       const result = await UserService.getProductsBySeller(sellerId);
 
       res.status(200).json({
+        status: true,
         data: result,
       });
     } catch (error) {
@@ -121,6 +128,7 @@ export class UserController {
       );
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {

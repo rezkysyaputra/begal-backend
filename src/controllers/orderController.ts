@@ -11,6 +11,7 @@ export class OrderController {
       const result = await OrderService.create(user, orderData);
 
       res.status(201).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -24,6 +25,7 @@ export class OrderController {
       const result: Order[] = await OrderService.list(user);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -38,6 +40,7 @@ export class OrderController {
       const result: Order = await OrderService.get(user, orderId);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -54,6 +57,7 @@ export class OrderController {
       const result: Order = await OrderService.update(user, orderId, status);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {

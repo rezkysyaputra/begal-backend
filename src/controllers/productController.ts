@@ -25,6 +25,7 @@ export class ProductController {
       );
 
       res.status(201).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -38,6 +39,7 @@ export class ProductController {
       const result: ProductResponse[] = await ProductService.list(user);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -51,6 +53,7 @@ export class ProductController {
       const result: ProductResponse = await ProductService.get(productId);
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -79,6 +82,7 @@ export class ProductController {
       );
 
       res.status(200).json({
+        success: true,
         data: result,
       });
     } catch (error) {
@@ -93,6 +97,7 @@ export class ProductController {
       const result: string = await ProductService.delete(user, productId);
 
       res.status(200).json({
+        success: true,
         message: result,
       });
     } catch (error) {
