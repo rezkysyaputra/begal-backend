@@ -40,6 +40,18 @@ export type Order = {
   updated_at: Date;
 };
 
+export type CreateOrderRequest = {
+  seller_id: string;
+  products: OrderProduct[];
+  payment_method: 'transfer' | 'cash';
+};
+export type MidtransResponse = {
+  transaction_id?: string;
+  payment_code?: string;
+  payment_response?: Record<string, any>;
+  payment_expiry?: Date;
+};
+
 export type StatusOrder = 'pending' | 'confirmed' | 'delivered' | 'cancelled';
 
 export const toOrderResponse = (order: any): Order => {

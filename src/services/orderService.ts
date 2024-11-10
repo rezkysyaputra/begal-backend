@@ -2,6 +2,7 @@ import { OrderModel } from '../models/orderModel';
 import { ProductModel } from '../models/productModel';
 import { MidtransService } from './midtransService';
 import {
+  CreateOrderRequest,
   CreateOrderResponse,
   Order,
   StatusOrder,
@@ -16,7 +17,7 @@ import mongoose from 'mongoose';
 export class OrderService {
   static async create(
     user: { id: string },
-    data: any
+    data: CreateOrderRequest
   ): Promise<CreateOrderResponse> {
     const orderData = Validation.validate(OrderValidation.CREATE, data);
 

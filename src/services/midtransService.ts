@@ -1,15 +1,16 @@
 import axios from 'axios';
 import { UserModel } from '../models/userModel';
 import ResponseError from '../helpers/responseError';
+import { MidtransResponse } from '../types/orderType';
 
 export class MidtransService {
-  static async createTransaction(order: any): Promise<any> {
+  static async createTransaction(order: any): Promise<MidtransResponse> {
     if (!order) {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    const midtransAPI = process.env.MIDTRANS_APP_URL as string; // API Midtrans untuk membuat transaksi
-    const serverKey = process.env.MIDTRANS_SERVER_KEY; // Gantilah dengan server key Midtrans Anda
+    const midtransAPI = process.env.MIDTRANS_APP_URL as string;
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Basic ${Buffer.from(serverKey + ':').toString('base64')}`,
@@ -42,6 +43,8 @@ export class MidtransService {
 
     try {
       const response = await axios.post(midtransAPI, payload, { headers });
+      console.log(response.data);
+
       return response.data;
     } catch (error: any) {
       throw new Error('Midtrans API error: ' + error.message);

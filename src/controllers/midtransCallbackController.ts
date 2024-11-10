@@ -11,7 +11,7 @@ export class MidtransCallbackController {
       req.body;
 
     // Temukan order berdasarkan order_id
-    const order = await OrderModel.findOne({ transaction_id: order_id });
+    const order = await OrderModel.findById(order_id);
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
       return;
