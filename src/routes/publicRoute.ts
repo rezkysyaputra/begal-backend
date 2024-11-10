@@ -6,6 +6,10 @@ import { MidtransCallbackController } from '../controllers/midtransCallbackContr
 
 const publicRoute: Router = Router();
 
+// ROUTES SAYHELLO
+publicRoute.get('/', (req, res) => {
+  res.send('BELI GALON API');
+});
 // USERS
 publicRoute.post(
   '/users/register',
