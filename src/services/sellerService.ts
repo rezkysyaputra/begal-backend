@@ -18,9 +18,6 @@ import { SellerModel } from '../models/sellerModel';
 import { extractPublicId } from '../helpers/extractPublicId';
 
 export class SellerService {
-  /**
-   * Register a new seller account.
-   */
   static async register(
     request: CreateSellerRequest,
     image?: Express.Multer.File
@@ -30,7 +27,6 @@ export class SellerService {
       request
     );
 
-    // Check if name or email already exists
     const existingName = await SellerModel.exists({ name: validatedData.name });
     if (existingName) throw new ResponseError(400, 'Nama sudah terdaftar');
 
@@ -39,10 +35,8 @@ export class SellerService {
     });
     if (existingEmail) throw new ResponseError(400, 'Email sudah terdaftar');
 
-    // Hash password for security
     validatedData.password = await bcrypt.hash(validatedData.password, 10);
 
-    // Upload profile picture to Cloudinary if provided
     let profilePictureUrl: string | null = null;
     if (image) {
       profilePictureUrl = await new Promise((resolve, reject) => {
@@ -55,7 +49,6 @@ export class SellerService {
       });
     }
 
-    // Create new seller in database
     const newSeller = await SellerModel.create({
       ...validatedData,
       profile_picture_url: profilePictureUrl,
@@ -67,19 +60,14 @@ export class SellerService {
     };
   }
 
-  /**
-   * Login an existing seller.
-   */
   static async login(
     request: LoginSellerRequest
   ): Promise<LoginSellerResponse> {
     const loginData = Validation.validate(SellerValidation.LOGIN, request);
 
-    // Find seller by email
     const seller = await SellerModel.findOne({ email: loginData.email });
     if (!seller) throw new ResponseError(400, 'Email atau password salah');
 
-    // Verify password
     const isPasswordMatch = await bcrypt.compare(
       loginData.password,
       seller.password
@@ -87,7 +75,6 @@ export class SellerService {
     if (!isPasswordMatch)
       throw new ResponseError(400, 'Email atau password salah');
 
-    // Generate JWT token
     const payloadJwtToken = {
       id: seller._id as string,
       name: seller.name,
@@ -98,9 +85,6 @@ export class SellerService {
     return token;
   }
 
-  /**
-   * Retrieve seller information.
-   */
   static async get(seller: { id: string }): Promise<GetSellerResponse> {
     const foundSeller = await SellerModel.findById(seller.id);
     if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
@@ -108,9 +92,6 @@ export class SellerService {
     return toSellerResponse(foundSeller);
   }
 
-  /**
-   * Update seller information.
-   */
   static async update(
     seller: { id: string },
     request: UpdateSellerRequest,
@@ -118,7 +99,6 @@ export class SellerService {
   ): Promise<GetSellerResponse> {
     const newData = Validation.validate(SellerValidation.UPDATE, request);
 
-    // Retrieve existing data
     const existingData = await SellerModel.findById(seller.id);
     if (!existingData) throw new ResponseError(404, 'Seller tidak ditemukan');
 
@@ -140,7 +120,6 @@ export class SellerService {
       });
     }
 
-    // Merge address and operational_hours fields to keep existing data
     const mergedData = {
       ...newData,
       address: {
@@ -155,7 +134,6 @@ export class SellerService {
         profilePictureUrl ?? existingData.profile_picture_url,
     };
 
-    // Update seller in database
     const updatedSeller = await SellerModel.findByIdAndUpdate(
       seller.id,
       { $set: mergedData },
@@ -167,27 +145,21 @@ export class SellerService {
     return toSellerResponse(updatedSeller);
   }
 
-  /**
-   * Change seller's password.
-   */
   static async changePassword(
     seller: { id: string },
     request: ChangePasswordRequest
   ): Promise<string> {
     const data = Validation.validate(SellerValidation.CHANGE_PASSWORD, request);
 
-    // Find seller by ID
     const foundSeller = await SellerModel.findById(seller.id);
     if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
-    // Verify old password
     const isPasswordMatch = await bcrypt.compare(
       data.old_password,
       foundSeller.password
     );
     if (!isPasswordMatch) throw new ResponseError(400, 'Password lama salah');
 
-    // Hash new password and update
     const newPassword = await bcrypt.hash(data.new_password, 10);
     await SellerModel.findByIdAndUpdate(seller.id, { password: newPassword });
 

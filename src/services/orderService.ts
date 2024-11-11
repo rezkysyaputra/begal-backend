@@ -44,7 +44,6 @@ export class OrderService {
         throw new ResponseError(400, 'Beberapa produk tidak ditemukan');
       }
 
-      // Cek stok untuk semua produk terlebih dahulu
       orderData.products.forEach((orderProduct: any) => {
         const product = products.find(
           (p) => (p._id as string).toString() === orderProduct.product_id
@@ -60,7 +59,6 @@ export class OrderService {
         }
       });
 
-      // Jika stok cukup, lanjutkan mengurangi stok
       const detailedProducts = orderData.products.map((orderProduct: any) => {
         const product = products.find(
           (p) => (p._id as string).toString() === orderProduct.product_id

@@ -23,7 +23,6 @@ import { ProductResponse, toProductResponse } from '../types/productType';
 import mongoose from 'mongoose';
 
 export class UserService {
-  // Register user with optional profile picture upload
   static async register(
     request: CreateUserRequest,
     image?: Express.Multer.File
@@ -63,7 +62,6 @@ export class UserService {
     };
   }
 
-  // Login method with JWT token generation
   static async login(request: LoginUserRequest): Promise<LoginUserResponse> {
     const loginData = Validation.validate(UserValidation.LOGIN, request);
 
@@ -87,7 +85,6 @@ export class UserService {
     return token;
   }
 
-  // Get user details
   static async get(user: { id: string }): Promise<GetUserResponse> {
     const getUser = await UserModel.findById(user.id);
     if (!getUser) throw new ResponseError(404, 'User tidak ditemukan');
@@ -95,7 +92,6 @@ export class UserService {
     return toUserResponse(getUser);
   }
 
-  // Update user details, including optional address and profile picture update
   static async update(
     user: { id: string },
     request: UpdateUserRequest,
@@ -144,7 +140,6 @@ export class UserService {
     return toUserResponse(updatedUser);
   }
 
-  // Change user password
   static async changePassword(
     user: { id: string },
     request: ChangePasswordRequest
@@ -166,7 +161,6 @@ export class UserService {
     return 'Password berhasil diubah';
   }
 
-  // Get nearby sellers based on user's district
   static async getNearbySellers(user: {
     id: string;
   }): Promise<GetSellerResponse[]> {
@@ -182,7 +176,6 @@ export class UserService {
     return nearbySellers.map((seller) => toSellerResponse(seller));
   }
 
-  // Get products by seller
   static async getProductsBySeller(sellerId: string): Promise<any> {
     if (!mongoose.Types.ObjectId.isValid(sellerId))
       throw new ResponseError(400, 'Seller tidak ditemukan');

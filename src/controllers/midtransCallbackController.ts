@@ -10,14 +10,12 @@ export class MidtransCallbackController {
     const { order_id, transaction_status, expiry_time, transaction_id } =
       req.body;
 
-    // Temukan order berdasarkan order_id
     const order = await OrderModel.findOne({ _id: order_id });
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
       return;
     }
 
-    // Update status order berdasarkan status pembayaran dari Midtrans
     if (
       transaction_status === 'capture' ||
       transaction_status === 'settlement'
@@ -31,7 +29,7 @@ export class MidtransCallbackController {
 
     order.transaction_id = transaction_id;
     order.payment_expiry = expiry_time;
-    order.payment_response = req.body; // Simpan respons lengkap dari Midtrans
+    order.payment_response = req.body;
     await order.save();
 
     res.status(200).json({ message: 'Payment status updated successfully' });
