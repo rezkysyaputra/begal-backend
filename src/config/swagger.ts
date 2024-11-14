@@ -17,10 +17,10 @@ const swaggerOptions: Options = {
     },
     servers: [
       {
-        url: 'https://beligalon.vercel.app',
-      },
-      {
-        url: 'http://localhost:3000',
+        url:
+          process.env.NODE_ENV === 'production'
+            ? 'https://beligalon.vercel.app'
+            : 'http://localhost:3000',
       },
     ],
     components: {
