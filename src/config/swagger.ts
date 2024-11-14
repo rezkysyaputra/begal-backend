@@ -11,11 +11,14 @@ const swaggerOptions: Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Begal API ',
+      title: 'Beli Galon API Documentation',
       version: '1.0.0',
-      description: 'Dokumentasi API Begal',
+      description: 'API Documentation for the Beli Galon Application',
     },
     servers: [
+      {
+        url: 'https://beligalon.vercel.app',
+      },
       {
         url: 'http://localhost:3000',
       },
@@ -38,7 +41,7 @@ const swaggerOptions: Options = {
       },
     },
   },
-  apis: ['routes/*.ts', 'controllers/*.ts'],
+  apis: ['src/routes/*.ts', 'src/controllers/*.ts'],
 };
 
 export default swaggerOptions;

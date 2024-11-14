@@ -35,7 +35,7 @@ privateRoute.get(
   UserController.getNearbySellers
 );
 privateRoute.get(
-  '/products/seller/:sellerId',
+  '/sellers/:sellerId/products',
   roleAuthorization(['user']),
   UserController.getProductsBySeller
 );
