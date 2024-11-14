@@ -3,6 +3,7 @@ import { UserController } from '../controllers/userController';
 import upload from '../middlewares/uploadMiddleware';
 import { SellerController } from '../controllers/sellerController';
 import { MidtransCallbackController } from '../controllers/midtransCallbackController';
+import { AuthController } from '../controllers/authController';
 
 const publicRoute: Router = Router();
 
@@ -27,5 +28,13 @@ publicRoute.post(
   '/midtrans/callback',
   MidtransCallbackController.handleCallback
 );
+
+// AUTH
+publicRoute.post(
+  '/request-reset-password',
+  AuthController.requestPasswordReset
+);
+publicRoute.post('/verify-reset-code', AuthController.verifyResetCode);
+publicRoute.post('/reset-password', AuthController.resetPassword);
 
 export default publicRoute;

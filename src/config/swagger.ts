@@ -1,11 +1,11 @@
 // src/swagger.ts
 import { Options } from 'swagger-jsdoc';
-import { UserModel } from './models/userModel';
-import { SellerModel } from './models/sellerModel';
-import { ProductModel } from './models/productModel';
-import { OrderModel } from './models/orderModel';
-import { ReviewModel } from './models/reviewModel';
-import { NotificationModel } from './models/notificationModel';
+import { UserModel } from '../models/userModel';
+import { SellerModel } from '../models/sellerModel';
+import { ProductModel } from '../models/productModel';
+import { OrderModel } from '../models/orderModel';
+import { ReviewModel } from '../models/reviewModel';
+import { NotificationModel } from '../models/notificationModel';
 
 const swaggerOptions: Options = {
   definition: {

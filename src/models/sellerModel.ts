@@ -22,6 +22,8 @@ interface Seller extends Document {
   };
   rating: number;
   reviews_count: number;
+  reset_code?: string;
+  reset_code_expiry?: Date;
 }
 
 const sellerSchema = new Schema<Seller>(
@@ -51,6 +53,8 @@ const sellerSchema = new Schema<Seller>(
     },
     rating: { type: Number, default: 0 },
     reviews_count: { type: Number, default: 0 },
+    reset_code: { type: String },
+    reset_code_expiry: { type: Date },
   },
   {
     timestamps: true,

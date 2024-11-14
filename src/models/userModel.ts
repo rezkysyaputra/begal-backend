@@ -15,6 +15,8 @@ interface User extends Document {
   };
   role: 'user' | 'seller' | 'admin';
   profile_picture_url?: string;
+  reset_code?: string;
+  reset_code_expiry?: Date;
 }
 
 const userSchema = new Schema<User>(
@@ -33,6 +35,8 @@ const userSchema = new Schema<User>(
       street: { type: String, required: true },
       detail: { type: String, required: true },
     },
+    reset_code: { type: String },
+    reset_code_expiry: { type: Date },
   },
   {
     timestamps: true,
