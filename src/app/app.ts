@@ -19,6 +19,7 @@ app.use(cors());
 connectDB();
 
 // Swagger docs
+app.use(express.static('public'));
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
