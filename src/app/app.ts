@@ -19,12 +19,11 @@ app.use(cors());
 connectDB();
 
 // Swagger docs
-app.use(express.static('public'));
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.send('BELI GALON API');
 });
 app.use('/api', publicRoute);

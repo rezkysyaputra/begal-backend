@@ -125,7 +125,7 @@ export class UserController {
 
   /**
    * @swagger
-   * /api/users:
+   * /api/users/profile:
    *   get:
    *     summary: Get user information
    *     tags: [User]
