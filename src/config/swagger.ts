@@ -17,10 +17,10 @@ const swaggerOptions: Options = {
     },
     servers: [
       {
-        url:
-          process.env.NODE_ENV === 'production'
-            ? 'https://api-beli-galon.vercel.app'
-            : 'http://localhost:3000',
+        url: 'https://api-beli-galon.vercel.app',
+      },
+      {
+        url: 'http://localhost:3000',
       },
     ],
     components: {
