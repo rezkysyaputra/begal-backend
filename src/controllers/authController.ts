@@ -10,7 +10,7 @@ import { AuthService } from '../services/authService';
 export class AuthController {
   /**
    * @swagger
-   * /auth/request-password-reset:
+   * /auth/request-reset-password:
    *   post:
    *     tags: [Authentication]
    *     summary: Request a password reset
