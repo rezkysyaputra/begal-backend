@@ -19,7 +19,7 @@ const swaggerOptions: Options = {
       {
         url:
           process.env.NODE_ENV === 'production'
-            ? 'https://beligalon.vercel.app'
+            ? 'https://api-beli-galon.vercel.app'
             : 'http://localhost:3000',
       },
     ],
