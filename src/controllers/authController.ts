@@ -26,13 +26,9 @@ export class AuthController {
    *             properties:
    *               email:
    *                 type: string
-   *                 description: The email address of the user.
-   *                 example: user@example.com
    *               role:
    *                 type: string
    *                 enum: [user, seller]
-   *                 description: Role of the user.
-   *                 example: user
    *     responses:
    *       200:
    *         description: Reset code sent successfully.
@@ -79,17 +75,11 @@ export class AuthController {
    *             properties:
    *               email:
    *                 type: string
-   *                 description: The email address of the user.
-   *                 example: user@example.com
    *               code:
    *                 type: string
-   *                 description: The reset code sent to the user's email.
-   *                 example: 123456
    *               role:
    *                 type: string
    *                 enum: [user, seller]
-   *                 description: Role of the user.
-   *                 example: user
    *     responses:
    *       200:
    *         description: Reset code verified successfully.
@@ -135,17 +125,11 @@ export class AuthController {
    *             properties:
    *               email:
    *                 type: string
-   *                 description: The email address of the user.
-   *                 example: user@example.com
    *               newPassword:
    *                 type: string
-   *                 description: The new password for the user.
-   *                 example: newSecurePassword123
    *               role:
    *                 type: string
    *                 enum: [user, seller]
-   *                 description: Role of the user.
-   *                 example: user
    *     responses:
    *       200:
    *         description: Password reset successfully.
