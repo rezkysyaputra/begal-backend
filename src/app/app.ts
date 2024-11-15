@@ -13,6 +13,7 @@ const app: express.Application = express();
 
 app.use(express.json());
 app.use(requestLogger);
+app.use(express.static('/api-docs'));
 
 app.use(cors());
 // connect to database
