@@ -31,10 +31,10 @@ publicRoute.post(
 
 // AUTH
 publicRoute.post(
-  '/api/request-reset-password',
+  '/auth/request-reset-password',
   AuthController.requestPasswordReset
 );
-publicRoute.post('/api/verify-reset-code', AuthController.verifyResetCode);
-publicRoute.post('/api/reset-password', AuthController.resetPassword);
+publicRoute.post('/auth/verify-reset-code', AuthController.verifyResetCode);
+publicRoute.post('/auth/reset-password', AuthController.resetPassword);
 
 export default publicRoute;

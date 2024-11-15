@@ -13,7 +13,6 @@ const app: express.Application = express();
 
 app.use(express.json());
 app.use(requestLogger);
-app.use(express.static('/api-docs'));
 
 app.use(cors());
 // connect to database
@@ -24,10 +23,10 @@ const swaggerSpec = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
+app.use('/api', publicRoute);
 app.get('/', (_req, res) => {
   res.send('BELI GALON API');
 });
-app.use('/api', publicRoute);
 app.use('/api', privateRoute);
 
 // error Middleware

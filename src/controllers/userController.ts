@@ -46,6 +46,7 @@ export class UserController {
    *                 type: string
    *                 default: user
    *               address:
+   *                 required: true
    *                 type: object
    *                 properties:
    *                   province:
@@ -70,6 +71,8 @@ export class UserController {
     try {
       const image = req.file;
       const request: CreateUserRequest = req.body;
+      request.address = JSON.parse(req.body.address);
+
       const result = await UserService.register(request, image);
 
       res.status(201).json({

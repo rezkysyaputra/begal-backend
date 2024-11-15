@@ -10,7 +10,7 @@ import { AuthService } from '../services/authService';
 export class AuthController {
   /**
    * @swagger
-   * /auth/request-reset-password:
+   * /api/auth/request-reset-password:
    *   post:
    *     tags: [Authentication]
    *     summary: Request a password reset
@@ -58,7 +58,7 @@ export class AuthController {
 
   /**
    * @swagger
-   * /auth/verify-reset-code:
+   * /api/auth/verify-reset-code:
    *   post:
    *     tags: [Authentication]
    *     summary: Verify the reset code
@@ -108,7 +108,7 @@ export class AuthController {
 
   /**
    * @swagger
-   * /auth/reset-password:
+   * /api/auth/reset-password:
    *   post:
    *     tags: [Authentication]
    *     summary: Reset the user's password
