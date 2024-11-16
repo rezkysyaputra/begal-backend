@@ -6,9 +6,8 @@ import { errorMiddleware } from '../middlewares/errorMiddleware';
 import connectDB from './database';
 import { errorLogger, requestLogger } from '../middlewares/loggerMiddleware';
 import swaggerUi from 'swagger-ui-express';
-import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerOptions from '../config/swagger';
-import path from 'path';
+import swaggerJSDoc from 'swagger-jsdoc';
 
 const app: express.Application = express();
 
@@ -20,50 +19,21 @@ app.use(cors());
 connectDB();
 
 // Swagger docs
-const swaggerSpec = swaggerJsDoc(swaggerOptions);
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+const CSS_URL =
+  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css';
 
-// Pastikan file static Swagger UI dapat diakses
-app.use(
-  '/api-docs/swagger-ui.css',
-  express.static(
-    path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui.css')
-  )
-);
+// Swagger setup
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
-app.use(
-  '/api-docs/swagger-ui-bundle.js',
-  express.static(
-    path.join(__dirname, 'node_modules/swagger-ui-dist/swagger-ui-bundle.js')
-  )
-);
-
-app.use(
-  '/api-docs/swagger-ui-standalone-preset.js',
-  express.static(
-    path.join(
-      __dirname,
-      'node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js'
-    )
-  )
-);
-
-// Setup Swagger UI
 app.use(
   '/api-docs',
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-    customCssUrl: '/api-docs/swagger-ui.css',
-    customJs: '/api-docs/swagger-ui-bundle.js',
+    customCss:
+      '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }',
+    customCssUrl: CSS_URL,
   })
 );
-
-// Middleware untuk security headers
-app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  next();
-});
 
 // Routes
 app.use('/api', publicRoute);
