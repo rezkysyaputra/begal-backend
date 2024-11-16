@@ -20,7 +20,7 @@ connectDB();
 
 // Swagger docs
 const CSS_URL =
-  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css';
+  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.js';
 
 // Swagger setup
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
