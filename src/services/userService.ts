@@ -176,6 +176,11 @@ export class UserService {
     return nearbySellers.map((seller) => toSellerResponse(seller));
   }
 
+  static async getAllProducts(): Promise<ProductResponse[]> {
+    const products = await ProductModel.find({});
+    return products.map((product) => toProductResponse(product));
+  }
+
   static async getProductsBySeller(sellerId: string): Promise<any> {
     if (!mongoose.Types.ObjectId.isValid(sellerId))
       throw new ResponseError(400, 'Seller tidak ditemukan');

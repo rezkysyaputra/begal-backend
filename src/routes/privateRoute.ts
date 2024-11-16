@@ -47,7 +47,7 @@ privateRoute.get(
 privateRoute.get(
   '/products',
   roleAuthorization(['user']),
-  ProductController.getAllProducts
+  UserController.getAllProducts
 );
 
 // SELLER

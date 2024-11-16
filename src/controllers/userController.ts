@@ -299,6 +299,33 @@ export class UserController {
 
   /**
    * @swagger
+   * /api/products:
+   *   get:
+   *     summary: Get all products only by user
+   *     tags: [User]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Products retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result: ProductResponse[] = await UserService.getAllProducts();
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
    * /api/sellers/{sellerId}/products:
    *   get:
    *     summary: Get products by seller only by user

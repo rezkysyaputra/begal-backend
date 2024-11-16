@@ -106,33 +106,6 @@ export class ProductController {
 
   /**
    * @swagger
-   * /api/products:
-   *   get:
-   *     summary: Get all products only by user
-   *     tags: [Product]
-   *     security:
-   *       - bearerAuth: []
-   *     responses:
-   *       200:
-   *         description: Products retrieved successfully
-   *       400:
-   *         description: Bad request
-   */
-  static async getAllProducts(req: Request, res: Response, next: NextFunction) {
-    try {
-      const result: ProductResponse[] = await ProductService.getAllProducts();
-
-      res.status(200).json({
-        success: true,
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
-   * @swagger
    * /api/products/{productId}:
    *   get:
    *     summary: Get a product by ID only by user or seller
