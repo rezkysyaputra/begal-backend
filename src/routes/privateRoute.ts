@@ -44,6 +44,11 @@ privateRoute.get(
   roleAuthorization(['user']),
   UserController.searchProducts
 );
+privateRoute.get(
+  '/products',
+  roleAuthorization(['user']),
+  ProductController.getAllProducts
+);
 
 // SELLER
 privateRoute.get(

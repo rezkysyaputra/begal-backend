@@ -13,7 +13,7 @@ export class AuthController {
    * /api/auth/request-reset-password:
    *   post:
    *     tags: [Authentication]
-   *     summary: Request a password reset
+   *     summary: Request a password reset code for the user or seller
    *     requestBody:
    *       required: true
    *       content:
@@ -61,7 +61,7 @@ export class AuthController {
    * /api/auth/verify-reset-code:
    *   post:
    *     tags: [Authentication]
-   *     summary: Verify the reset code
+   *     summary: Verify the reset code for the user or seller
    *     requestBody:
    *       required: true
    *       content:
@@ -111,7 +111,7 @@ export class AuthController {
    * /api/auth/reset-password:
    *   post:
    *     tags: [Authentication]
-   *     summary: Reset the user's password
+   *     summary: Reset the user's password or seller's password
    *     requestBody:
    *       required: true
    *       content:

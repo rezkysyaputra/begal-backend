@@ -17,7 +17,7 @@ export class ProductController {
    * @swagger
    * /api/sellers/products:
    *   post:
-   *     summary: Create a new product
+   *     summary: Create a new product only by seller
    *     tags: [Product]
    *     security:
    *       - bearerAuth: []
@@ -80,7 +80,7 @@ export class ProductController {
    * @swagger
    * /api/sellers/products:
    *   get:
-   *     summary: Get all products
+   *     summary: Get list products only by seller
    *     tags: [Product]
    *     security:
    *       - bearerAuth: []
@@ -106,9 +106,36 @@ export class ProductController {
 
   /**
    * @swagger
+   * /api/products:
+   *   get:
+   *     summary: Get all products only by user
+   *     tags: [Product]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Products retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result: ProductResponse[] = await ProductService.getAllProducts();
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
    * /api/products/{productId}:
    *   get:
-   *     summary: Get a product by ID
+   *     summary: Get a product by ID only by user or seller
    *     tags: [Product]
    *     security:
    *       - bearerAuth: []
@@ -142,7 +169,7 @@ export class ProductController {
    * @swagger
    * /api/sellers/products/{productId}:
    *   patch:
-   *     summary: Update a product by ID
+   *     summary: Update a product by ID only by seller
    *     tags: [Product]
    *     security:
    *       - bearerAuth: []
@@ -203,7 +230,7 @@ export class ProductController {
    * @swagger
    * /api/sellers/products/{productId}:
    *   delete:
-   *     summary: Delete a product by ID
+   *     summary: Delete a product by ID  only by seller
    *     tags: [Product]
    *     security:
    *       - bearerAuth: []

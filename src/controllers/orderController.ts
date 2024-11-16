@@ -15,7 +15,7 @@ export class OrderController {
    *   post:
    *     tags:
    *       - Order
-   *     summary: Create a new order
+   *     summary: Create a new order only by user
    *     security:
    *       - bearerAuth: []
    *     requestBody:
@@ -69,7 +69,7 @@ export class OrderController {
    * /api/orders:
    *   get:
    *     tags: [Order]
-   *     summary: Get all orders
+   *     summary: Get all orders only by user or seller
    *     security:
    *       - bearerAuth: []
    *     responses:
@@ -97,7 +97,7 @@ export class OrderController {
    * /api/orders/{orderId}:
    *   get:
    *     tags: [Order]
-   *     summary: Get an order by ID
+   *     summary: Get an order by ID only by user or seller
    *     security:
    *       - bearerAuth: []
    *     parameters:
@@ -132,7 +132,7 @@ export class OrderController {
    * /api/orders/{orderId}:
    *   patch:
    *     tags: [Order]
-   *     summary: Update status an order by ID
+   *     summary: Update status an order by ID only by seller
    *     security:
    *       - bearerAuth: []
    *     parameters:

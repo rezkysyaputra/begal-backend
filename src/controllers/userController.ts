@@ -88,7 +88,7 @@ export class UserController {
    * @swagger
    * /api/users/login:
    *   post:
-   *     summary: Log in a user
+   *     summary: Log in a user and get a token
    *     tags: [User]
    *     requestBody:
    *       required: true
@@ -267,7 +267,7 @@ export class UserController {
    * @swagger
    * /api/sellers/nearby:
    *   get:
-   *     summary: Get nearby sellers
+   *     summary: Get nearby sellers only by user
    *     tags: [User]
    *     security:
    *       - bearerAuth: []
@@ -301,7 +301,7 @@ export class UserController {
    * @swagger
    * /api/sellers/{sellerId}/products:
    *   get:
-   *     summary: Get products by seller
+   *     summary: Get products by seller only by user
    *     tags: [User]
    *     security:
    *       - bearerAuth: []
@@ -339,7 +339,7 @@ export class UserController {
    * @swagger
    * /api/products/search:
    *   get:
-   *     summary: Search products by keyword
+   *     summary: Search products by keyword only by user
    *     tags: [User]
    *     security:
    *       - bearerAuth: []

@@ -56,6 +56,11 @@ export class ProductService {
     return products.map((product) => toProductResponse(product));
   }
 
+  static async getAllProducts(): Promise<ProductResponse[]> {
+    const products = await ProductModel.find({});
+    return products.map((product) => toProductResponse(product));
+  }
+
   static async get(id: string): Promise<ProductResponse> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new ResponseError(400, 'Produk tidak ditemukan');
