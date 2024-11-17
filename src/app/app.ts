@@ -6,8 +6,8 @@ import { errorMiddleware } from '../middlewares/errorMiddleware';
 import connectDB from './database';
 import { errorLogger, requestLogger } from '../middlewares/loggerMiddleware';
 import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerOptions from '../config/swagger';
-import swaggerJSDoc from 'swagger-jsdoc';
 
 const app: express.Application = express();
 
@@ -19,21 +19,8 @@ app.use(cors());
 connectDB();
 
 // Swagger docs
-const CSS_URL =
-  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui-bundle.js';
-
-// Swagger setup
-const swaggerSpec = swaggerJSDoc(swaggerOptions);
-
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    customCss:
-      '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }',
-    customCssUrl: CSS_URL,
-  })
-);
+const swaggerSpec = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api', publicRoute);
