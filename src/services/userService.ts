@@ -192,8 +192,19 @@ export class UserService {
     if (!products) throw new ResponseError(404, 'Produk tidak ditemukan');
 
     return {
-      seller_id: seller._id,
+      id: seller._id,
       name: seller.name,
+      owner_name: seller.owner_name,
+      role: seller.role,
+      profile_picture_url: seller.profile_picture_url,
+      phone: seller.phone,
+      email: seller.email,
+      operational_hours: seller.operational_hours,
+      address: seller.address,
+      rating: seller.rating,
+      reviews_count: seller.reviews_count,
+      created_at: seller.createdAt,
+      updated_at: seller.updatedAt,
       products: products.map((product) => toProductResponse(product)),
     };
   }

@@ -5,6 +5,8 @@ interface Review extends Document {
   seller_id: Schema.Types.ObjectId;
   rating: number;
   review: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const reviewSchema = new Schema<Review>(

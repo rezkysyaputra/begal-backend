@@ -24,6 +24,8 @@ interface Seller extends Document {
   reviews_count: number;
   reset_code?: string;
   reset_code_expiry?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const sellerSchema = new Schema<Seller>(

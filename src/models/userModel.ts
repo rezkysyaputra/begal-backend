@@ -17,6 +17,8 @@ interface User extends Document {
   profile_picture_url?: string;
   reset_code?: string;
   reset_code_expiry?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const userSchema = new Schema<User>(

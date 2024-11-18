@@ -25,11 +25,13 @@ interface Order extends Document {
   total_price: number;
   payment_method: 'transfer' | 'cash';
   payment_status: 'pending' | 'success' | 'failed';
-  transaction_id: string; // ID transaksi dari Midtrans
-  payment_code?: string; // Kode pembayaran jika menggunakan metode manual
-  payment_response?: Record<string, any>; // Respons lengkap dari Midtrans
-  payment_expiry?: Date; // Waktu kadaluarsa pembayaran
+  transaction_id: string;
+  payment_code?: string;
+  payment_response?: Record<string, any>;
+  payment_expiry?: Date;
   status: 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const addressSchema = new Schema<Address>({
@@ -66,10 +68,10 @@ const orderSchema = new Schema<Order>(
       enum: ['pending', 'success', 'failed'],
       default: 'pending',
     },
-    transaction_id: { type: String, required: false }, // ID transaksi
-    payment_code: { type: String }, // Kode pembayaran (opsional)
-    payment_response: { type: Schema.Types.Mixed }, // Respons pembayaran
-    payment_expiry: { type: Date }, // Kadaluarsa pembayaran
+    transaction_id: { type: String, required: false },
+    payment_code: { type: String },
+    payment_response: { type: Schema.Types.Mixed },
+    payment_expiry: { type: Date },
     status: {
       type: String,
       enum: ['pending', 'confirmed', 'delivered', 'cancelled'],

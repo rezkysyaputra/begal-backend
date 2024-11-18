@@ -7,6 +7,8 @@ interface Product extends Document {
   price: number;
   stock: number;
   image_url?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const productSchema = new Schema<Product>(
