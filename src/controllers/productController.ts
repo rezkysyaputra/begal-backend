@@ -110,8 +110,6 @@ export class ProductController {
    *   get:
    *     summary: Get a product by ID only by user or seller
    *     tags: [Product]
-   *     security:
-   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: productId
@@ -128,6 +126,105 @@ export class ProductController {
     try {
       const productId = req.params.productId;
       const result: ProductResponse = await ProductService.get(productId);
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/products:
+   *   get:
+   *     summary: Get all products for users
+   *     tags: [Product]
+   *     responses:
+   *       200:
+   *         description: Products retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getAllProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result: ProductResponse[] = await ProductService.getAllProducts();
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/sellers/{sellerId}/products:
+   *   get:
+   *     summary: Get products by seller for users
+   *     tags: [Product]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: sellerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Products retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getProductsBySeller(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { sellerId } = req.params;
+      const result = await ProductService.getProductsBySeller(sellerId);
+
+      res.status(200).json({
+        status: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/products/search:
+   *   get:
+   *     summary: Search products by keyword for users
+   *     tags: [Product]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: query
+   *         name: keyword
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Products retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async searchProducts(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { keyword = '' } = req.query;
+
+      const result: ProductResponse[] = await ProductService.searchProducts(
+        keyword as string
+      );
 
       res.status(200).json({
         success: true,

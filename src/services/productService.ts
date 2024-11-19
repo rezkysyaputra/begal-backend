@@ -11,6 +11,7 @@ import cloudinary from '../utils/cloudinary';
 import { ProductValidation } from '../validations/productValidation';
 import { Validation } from '../validations/validation';
 import { extractPublicId } from '../helpers/extractPublicId';
+import { SellerModel } from '../models/sellerModel';
 
 export class ProductService {
   static async create(
@@ -64,6 +65,50 @@ export class ProductService {
     const product = await ProductModel.findById(id);
     if (!product) throw new ResponseError(404, 'Produk tidak ditemukan');
     return toProductResponse(product);
+  }
+
+  static async getAllProducts(): Promise<ProductResponse[]> {
+    const products = await ProductModel.find({});
+    return products.map((product) => toProductResponse(product));
+  }
+
+  static async getProductsBySeller(sellerId: string): Promise<any> {
+    if (!mongoose.Types.ObjectId.isValid(sellerId))
+      throw new ResponseError(400, 'Seller tidak ditemukan');
+
+    const seller = await SellerModel.findById(sellerId);
+    if (!seller) throw new ResponseError(404, 'Seller tidak ditemukan');
+
+    const products = await ProductModel.find({ seller_id: sellerId });
+    if (!products) throw new ResponseError(404, 'Produk tidak ditemukan');
+
+    return {
+      id: seller._id,
+      name: seller.name,
+      owner_name: seller.owner_name,
+      role: seller.role,
+      profile_picture_url: seller.profile_picture_url,
+      phone: seller.phone,
+      email: seller.email,
+      operational_hours: seller.operational_hours,
+      address: seller.address,
+      rating: seller.rating,
+      reviews_count: seller.reviews_count,
+      created_at: seller.createdAt,
+      updated_at: seller.updatedAt,
+      products: products.map((product) => toProductResponse(product)),
+    };
+  }
+
+  static async searchProducts(keyword: string): Promise<ProductResponse[]> {
+    const products = await ProductModel.find({
+      name: { $regex: keyword, $options: 'i' },
+    });
+
+    if (!products.length)
+      throw new ResponseError(404, 'Produk tidak ditemukan');
+
+    return products.map((product) => toProductResponse(product));
   }
 
   static async update(

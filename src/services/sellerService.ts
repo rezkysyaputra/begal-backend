@@ -16,6 +16,7 @@ import { ChangePasswordRequest } from '../types/userType';
 import { SellerValidation } from '../validations/sellerValidation';
 import { SellerModel } from '../models/sellerModel';
 import { extractPublicId } from '../helpers/extractPublicId';
+import { UserModel } from '../models/userModel';
 
 export class SellerService {
   static async register(
@@ -90,6 +91,26 @@ export class SellerService {
     if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
     return toSellerResponse(foundSeller);
+  }
+
+  static async getAll(): Promise<GetSellerResponse[]> {
+    const sellers = await SellerModel.find();
+    return sellers.map((seller) => toSellerResponse(seller));
+  }
+
+  static async getNearbySellers(user: {
+    id: string;
+  }): Promise<GetSellerResponse[]> {
+    const userLocation = await UserModel.findById(user.id);
+    if (!userLocation) throw new ResponseError(404, 'User tidak ditemukan');
+
+    const nearbySellers = await SellerModel.find({
+      'address.district': new RegExp(`^${userLocation.address.district}$`, 'i'),
+    });
+    if (!nearbySellers.length)
+      throw new ResponseError(404, 'Toko terdekat tidak ditemukan');
+
+    return nearbySellers.map((seller) => toSellerResponse(seller));
   }
 
   static async update(

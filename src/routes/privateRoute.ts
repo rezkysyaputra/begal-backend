@@ -32,22 +32,7 @@ privateRoute.patch(
 privateRoute.get(
   '/sellers/nearby',
   roleAuthorization(['user']),
-  UserController.getNearbySellers
-);
-privateRoute.get(
-  '/sellers/:sellerId/products',
-  roleAuthorization(['user']),
-  UserController.getProductsBySeller
-);
-privateRoute.get(
-  '/products/search/',
-  roleAuthorization(['user']),
-  UserController.searchProducts
-);
-privateRoute.get(
-  '/products',
-  roleAuthorization(['user']),
-  UserController.getAllProducts
+  SellerController.getNearbySellers
 );
 
 // SELLER
@@ -80,11 +65,7 @@ privateRoute.get(
   roleAuthorization(['seller']),
   ProductController.list
 );
-privateRoute.get(
-  '/products/:productId',
-  roleAuthorization(['seller', 'user']),
-  ProductController.get
-);
+
 privateRoute.patch(
   '/sellers/products/:productId',
   roleAuthorization(['seller']),

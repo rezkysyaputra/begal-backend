@@ -4,6 +4,7 @@ import upload from '../middlewares/uploadMiddleware';
 import { SellerController } from '../controllers/sellerController';
 import { MidtransCallbackController } from '../controllers/midtransCallbackController';
 import { AuthController } from '../controllers/authController';
+import { ProductController } from '../controllers/productController';
 
 const publicRoute: Router = Router();
 
@@ -22,6 +23,16 @@ publicRoute.post(
   SellerController.register
 );
 publicRoute.post('/sellers/login', SellerController.login);
+publicRoute.get('/sellers', SellerController.getAll);
+
+// PRODUCTS
+publicRoute.get('/products', ProductController.getAllProducts);
+publicRoute.get(
+  '/sellers/:sellerId/products',
+  ProductController.getProductsBySeller
+);
+publicRoute.get('/products/:productId', ProductController.get);
+publicRoute.get('/products/search/', ProductController.searchProducts);
 
 // MIDTRANS
 publicRoute.post(

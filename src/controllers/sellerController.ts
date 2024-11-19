@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { SellerService } from '../services/sellerService';
-import { CreateSellerRequest, LoginSellerRequest } from '../types/sellerType';
+import {
+  CreateSellerRequest,
+  GetSellerResponse,
+  LoginSellerRequest,
+} from '../types/sellerType';
 
 /**
  * @swagger
@@ -155,6 +159,65 @@ export class SellerController {
 
       res.status(200).json({
         success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/sellers:
+   *   get:
+   *     summary: Get all sellers information for users
+   *     tags: [Seller]
+   *     responses:
+   *       200:
+   *         description: Sellers retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await SellerService.getAll();
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/sellers/nearby:
+   *   get:
+   *     summary: Get nearby sellers only by user
+   *     tags: [User]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Nearby sellers retrieved successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async getNearbySellers(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const user = (req as any).user;
+      const result: GetSellerResponse[] = await SellerService.getNearbySellers(
+        user
+      );
+
+      res.status(200).json({
+        status: true,
         data: result,
       });
     } catch (error) {
