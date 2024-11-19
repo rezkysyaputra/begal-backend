@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserRequest, LoginUserRequest } from '../types/userType';
 import { UserService } from '../services/userService';
-import { GetSellerResponse } from '../types/sellerType';
 
 /**
  * @swagger

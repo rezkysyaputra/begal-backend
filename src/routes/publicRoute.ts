@@ -31,8 +31,8 @@ publicRoute.get(
   '/sellers/:sellerId/products',
   ProductController.getProductsBySeller
 );
+publicRoute.get('/search/products', ProductController.searchProducts);
 publicRoute.get('/products/:productId', ProductController.get);
-publicRoute.get('/products/search', ProductController.searchProducts);
 
 // MIDTRANS
 publicRoute.post(
