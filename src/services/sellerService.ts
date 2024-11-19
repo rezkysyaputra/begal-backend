@@ -29,12 +29,17 @@ export class SellerService {
     );
 
     const existingName = await SellerModel.exists({ name: validatedData.name });
-    if (existingName) throw new ResponseError(400, 'Nama sudah terdaftar');
+    if (existingName) {
+      throw new ResponseError(400, 'Nama sudah terdaftar');
+    }
 
     const existingEmail = await SellerModel.exists({
       email: validatedData.email,
     });
-    if (existingEmail) throw new ResponseError(400, 'Email sudah terdaftar');
+
+    if (existingEmail) {
+      throw new ResponseError(400, 'Email sudah terdaftar');
+    }
 
     validatedData.password = await bcrypt.hash(validatedData.password, 10);
 

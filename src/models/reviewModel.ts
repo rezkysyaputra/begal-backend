@@ -13,8 +13,8 @@ const reviewSchema = new Schema<Review>(
   {
     user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     seller_id: { type: Schema.Types.ObjectId, ref: 'Seller', required: true },
-    rating: { type: Number, required: true },
-    review: { type: String, required: true },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    review: { type: String, default: '' },
   },
   {
     timestamps: true,

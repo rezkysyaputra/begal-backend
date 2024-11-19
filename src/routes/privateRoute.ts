@@ -8,6 +8,7 @@ import { SellerController } from '../controllers/sellerController';
 import { ProductController } from '../controllers/productController';
 import upload from '../middlewares/uploadMiddleware';
 import { OrderController } from '../controllers/orderController';
+import { ReviewController } from '../controllers/reviewController';
 
 const privateRoute: Router = Router();
 privateRoute.use(authMiddleware);
@@ -98,6 +99,13 @@ privateRoute.patch(
   '/orders/:orderId',
   roleAuthorization(['seller']),
   OrderController.update
+);
+
+// REVIEW
+privateRoute.post(
+  '/users/reviews',
+  roleAuthorization(['user']),
+  ReviewController.create
 );
 
 export default privateRoute;
