@@ -32,7 +32,7 @@ publicRoute.get(
   ProductController.getProductsBySeller
 );
 publicRoute.get('/products/:productId', ProductController.get);
-publicRoute.get('/products/search/', ProductController.searchProducts);
+publicRoute.get('/products/search', ProductController.searchProducts);
 
 // MIDTRANS
 publicRoute.post(

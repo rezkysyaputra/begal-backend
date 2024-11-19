@@ -167,8 +167,6 @@ export class ProductController {
    *   get:
    *     summary: Get products by seller for users
    *     tags: [Product]
-   *     security:
-   *       - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: sellerId
@@ -205,8 +203,6 @@ export class ProductController {
    *   get:
    *     summary: Search products by keyword for users
    *     tags: [Product]
-   *     security:
-   *       - bearerAuth: []
    *     parameters:
    *       - in: query
    *         name: keyword
