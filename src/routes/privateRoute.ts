@@ -107,5 +107,20 @@ privateRoute.post(
   roleAuthorization(['user']),
   ReviewController.create
 );
+privateRoute.get(
+  '/sellers/reviews',
+  roleAuthorization(['seller']),
+  ReviewController.getAllReviews
+);
+privateRoute.patch(
+  '/users/reviews/:reviewId',
+  roleAuthorization(['user']),
+  ReviewController.update
+);
+privateRoute.delete(
+  '/users/reviews/:reviewId',
+  roleAuthorization(['user']),
+  ReviewController.delete
+);
 
 export default privateRoute;

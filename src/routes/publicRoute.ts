@@ -5,6 +5,7 @@ import { SellerController } from '../controllers/sellerController';
 import { MidtransCallbackController } from '../controllers/midtransCallbackController';
 import { AuthController } from '../controllers/authController';
 import { ProductController } from '../controllers/productController';
+import { ReviewController } from '../controllers/reviewController';
 
 const publicRoute: Router = Router();
 
@@ -33,6 +34,12 @@ publicRoute.get(
 );
 publicRoute.get('/search/products', ProductController.searchProducts);
 publicRoute.get('/products/:productId', ProductController.get);
+
+// REVIEW
+publicRoute.get(
+  '/users/reviews/:sellerId',
+  ReviewController.getReviewsBySellerId
+);
 
 // MIDTRANS
 publicRoute.post(
