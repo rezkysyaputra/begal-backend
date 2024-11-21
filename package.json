@@ -5,7 +5,6 @@
   "scripts": {
     "start": "node dist/index.js",
     "build": "tsc",
-    "vercel-build": "tsc",
     "test": "jest",
     "dev": "nodemon --exec ts-node ./src/index.ts"
   },
