@@ -8,7 +8,6 @@ import { errorLogger, requestLogger } from '../middlewares/loggerMiddleware';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerOptions from '../config/swagger';
-import path from 'path';
 
 const app: express.Application = express();
 
@@ -19,23 +18,16 @@ app.use(cors());
 // connect to database
 connectDB();
 
-// Swagger Docs
+// Swagger docs
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve);
-app.get(
+app.use(
   '/api-docs',
+  swaggerUi.serve,
   swaggerUi.setup(swaggerSpec, {
+    explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
-    customSiteTitle: 'Beli Galon API Docs',
   })
 );
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(
-    '/swagger-ui',
-    express.static(path.join(__dirname, '../node_modules/swagger-ui-dist'))
-  );
-}
 
 // Routes
 app.use('/api', publicRoute);
