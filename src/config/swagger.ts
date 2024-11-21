@@ -1,4 +1,3 @@
-// src/swagger.ts
 import { Options } from 'swagger-jsdoc';
 import { UserModel } from '../models/userModel';
 import { SellerModel } from '../models/sellerModel';
@@ -31,7 +30,7 @@ const swaggerOptions: Options = {
           bearerFormat: 'JWT',
         },
       },
-      schemes: {
+      schemas: {
         User: UserModel,
         Seller: SellerModel,
         Product: ProductModel,
