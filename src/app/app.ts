@@ -20,13 +20,7 @@ connectDB();
 
 // Swagger docs
 const swaggerSpec = swaggerJsDoc(swaggerOptions);
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec, {
-    explorer: true,
-  })
-);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.use('/api', publicRoute);
