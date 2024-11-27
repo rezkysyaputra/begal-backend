@@ -212,12 +212,11 @@ export class SellerController {
   ) {
     try {
       const user = (req as any).user;
-      const result: GetSellerResponse[] = await SellerService.getNearbySellers(
-        user
-      );
+      const result: GetSellerResponse[] =
+        await SellerService.getNearbySellers(user);
 
       res.status(200).json({
-        status: true,
+        success: true,
         data: result,
       });
     } catch (error) {

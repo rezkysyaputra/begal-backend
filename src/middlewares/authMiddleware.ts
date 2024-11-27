@@ -12,11 +12,9 @@ export const authMiddleware = (
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET as string);
 
-      if (user) {
-        (req as any).user = user;
-        next();
-        return;
-      }
+      (req as any).user = user;
+      next();
+      return;
     } catch (error) {
       res.status(401).json({
         errors: 'Unauthorized',
