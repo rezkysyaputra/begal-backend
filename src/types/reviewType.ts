@@ -27,7 +27,7 @@ export function toReviewResponse(review: any): ReviewResponse {
     user_id: review.user_id,
     seller_id: review.seller_id,
     rating: review.rating,
-    comment: review.review,
+    comment: review.comment,
     created_at: review.createdAt,
     updated_at: review.updatedAt,
   };
