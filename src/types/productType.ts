@@ -9,6 +9,7 @@ export type CreateProductRequest = {
 export type ProductResponse = {
   id: string;
   seller_id: string;
+  seller_name?: string;
   name: string;
   description: string;
   price: number;
@@ -31,6 +32,7 @@ export const toProductResponse = (product: any): ProductResponse => {
   return {
     id: product._id,
     seller_id: product.seller_id,
+    seller_name: product.seller_name,
     name: product.name,
     description: product.description,
     price: product.price,

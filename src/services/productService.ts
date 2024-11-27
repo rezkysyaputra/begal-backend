@@ -64,7 +64,19 @@ export class ProductService {
 
     const product = await ProductModel.findById(id);
     if (!product) throw new ResponseError(404, 'Produk tidak ditemukan');
-    return toProductResponse(product);
+
+    const sellerName = await SellerModel.findById(product.seller_id).select(
+      'name'
+    );
+
+    if (!sellerName) throw new ResponseError(404, 'Seller tidak ditemukan');
+
+    const mergeProduct = {
+      ...product.toObject(),
+      seller_name: sellerName.name,
+    };
+
+    return toProductResponse(mergeProduct);
   }
 
   static async getAllProducts(): Promise<ProductResponse[]> {
