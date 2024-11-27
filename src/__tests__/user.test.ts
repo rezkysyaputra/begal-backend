@@ -14,12 +14,12 @@ jest.mock('cloudinary', () => ({
     uploader: {
       upload_stream: jest.fn((options, callback) => {
         callback(null, {
-          secure_url: 'http://res.cloudinary.com/mock-image.jpg',
+          secure_url: 'http://res.cloudinary.com/upload/image/mock-image.jpg',
           public_id: 'mock-public-id',
         });
       }),
+      destroy: jest.fn().mockResolvedValue({ result: 'ok' }),
     },
-    destroy: jest.fn().mockResolvedValue({ result: 'ok' }),
   },
 }));
 

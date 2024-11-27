@@ -59,7 +59,7 @@ export class ProductService {
 
   static async get(id: string): Promise<ProductResponse> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new ResponseError(400, 'Produk tidak ditemukan');
+      throw new ResponseError(404, 'Produk tidak ditemukan');
     }
 
     const product = await ProductModel.findById(id);
@@ -85,9 +85,9 @@ export class ProductService {
   }
 
   static async getProductsBySeller(sellerId: string): Promise<any> {
-    if (!mongoose.Types.ObjectId.isValid(sellerId))
-      throw new ResponseError(400, 'Seller tidak ditemukan');
-
+    if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+      throw new ResponseError(404, 'Seller tidak ditemukan');
+    }
     const seller = await SellerModel.findById(sellerId);
     if (!seller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
@@ -134,7 +134,7 @@ export class ProductService {
     );
 
     if (!mongoose.Types.ObjectId.isValid(request.id)) {
-      throw new ResponseError(400, 'Produk tidak ditemukan');
+      throw new ResponseError(404, 'Produk tidak ditemukan');
     }
 
     const existingProduct = await ProductModel.findById({
@@ -183,7 +183,7 @@ export class ProductService {
 
   static async delete(user: { id: string }, id: string): Promise<string> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new ResponseError(400, 'Produk tidak ditemukan');
+      throw new ResponseError(404, 'Produk tidak ditemukan');
     }
 
     const product = await ProductModel.findByIdAndDelete({

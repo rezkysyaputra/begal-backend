@@ -189,7 +189,7 @@ export class ProductController {
       const result = await ProductService.getProductsBySeller(sellerId);
 
       res.status(200).json({
-        status: true,
+        success: true,
         data: result,
       });
     } catch (error) {

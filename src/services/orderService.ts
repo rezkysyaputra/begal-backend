@@ -22,7 +22,7 @@ export class OrderService {
     const orderData = Validation.validate(OrderValidation.CREATE, data);
 
     if (!mongoose.Types.ObjectId.isValid(orderData.seller_id)) {
-      throw new ResponseError(400, 'Seller tidak ditemukan');
+      throw new ResponseError(404, 'Seller tidak ditemukan');
     }
 
     const matchUser = await UserModel.findById(user.id);
@@ -41,7 +41,7 @@ export class OrderService {
       }).session(session);
 
       if (products.length !== orderData.products.length) {
-        throw new ResponseError(400, 'Beberapa produk tidak ditemukan');
+        throw new ResponseError(404, 'Beberapa produk tidak ditemukan');
       }
 
       orderData.products.forEach((orderProduct: any) => {
@@ -49,7 +49,7 @@ export class OrderService {
           (p) => (p._id as string).toString() === orderProduct.product_id
         );
         if (!product) {
-          throw new ResponseError(400, 'Produk tidak ditemukan');
+          throw new ResponseError(404, 'Produk tidak ditemukan');
         }
         if (product.stock < orderProduct.quantity) {
           throw new ResponseError(
@@ -147,7 +147,7 @@ export class OrderService {
     id: string
   ): Promise<Order> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new ResponseError(400, 'Order tidak ditemukan');
+      throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
     const filterId = user.role === 'user' ? 'user_id' : 'seller_id';
@@ -162,7 +162,7 @@ export class OrderService {
     status: StatusOrder
   ): Promise<Order> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new ResponseError(400, 'Order tidak ditemukan');
+      throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
     const order = await OrderModel.findById({ _id: id, seller_id: user.id });

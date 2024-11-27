@@ -19,7 +19,7 @@ export class ReviewService {
     const validatedData = Validation.validate(ReviewValidation.CREATE, data);
 
     if (!mongoose.Types.ObjectId.isValid(data.seller_id)) {
-      throw new ResponseError(400, 'Seller tidak ditemukan');
+      throw new ResponseError(404, 'Seller tidak ditemukan');
     }
 
     const seller = await SellerModel.findById(validatedData.seller_id);
@@ -72,7 +72,7 @@ export class ReviewService {
     sellerId: string
   ): Promise<ReviewResponse[]> {
     if (!mongoose.Types.ObjectId.isValid(sellerId)) {
-      throw new ResponseError(400, 'Seller tidak ditemukan');
+      throw new ResponseError(404, 'Seller tidak ditemukan');
     }
 
     const reviews = await ReviewModel.find({ seller_id: sellerId }).populate(
