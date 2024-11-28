@@ -124,7 +124,7 @@ export class ReviewService {
     const validatedData = Validation.validate(ReviewValidation.UPDATE, data);
 
     if (!mongoose.Types.ObjectId.isValid(reviewId)) {
-      throw new ResponseError(400, 'Review tidak valid');
+      throw new ResponseError(404, 'Review tidak ditemukan');
     }
 
     const review = await ReviewModel.findOne({
@@ -168,7 +168,7 @@ export class ReviewService {
 
   static async delete(user: { id: string }, reviewId: string) {
     if (!mongoose.Types.ObjectId.isValid(reviewId)) {
-      throw new ResponseError(400, 'Review tidak valid');
+      throw new ResponseError(404, 'Review tidak ditemukan');
     }
 
     const review = await ReviewModel.findOneAndDelete({

@@ -46,7 +46,7 @@ export class ReviewController {
       const user = (req as any).user;
       const result: ReviewResponse = await ReviewService.create(user, data);
 
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         data: result,
       });
@@ -81,9 +81,8 @@ export class ReviewController {
     try {
       const { sellerId } = req.params;
 
-      const result: ReviewResponse[] = await ReviewService.getReviewsBySellerId(
-        sellerId
-      );
+      const result: ReviewResponse[] =
+        await ReviewService.getReviewsBySellerId(sellerId);
 
       res.status(200).json({
         success: true,

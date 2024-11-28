@@ -2,7 +2,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import { SellerModel } from '../models/sellerModel';
-import logger from '../utils/logger';
 import createServer from '../app/server';
 import { hashPassword } from '../utils/testUtils';
 import { ProductModel } from '../models/productModel';
@@ -75,7 +74,6 @@ describe('PRODUCT ENDPOINT', () => {
         .attach('image', Buffer.from('mock file content'), 'mock-image.jpg')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body.data);
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('ABC Store 2');
@@ -138,7 +136,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get('/api/sellers/products')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -147,7 +144,6 @@ describe('PRODUCT ENDPOINT', () => {
     it('should return unauthorized error with undefined token', async () => {
       const response = await request(app).get('/api/sellers/products');
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -157,7 +153,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get('/api/sellers/products')
         .set('Authorization', `Bearer wrongtoken`);
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -167,7 +162,6 @@ describe('PRODUCT ENDPOINT', () => {
     it('should get all products successfully', async () => {
       const response = await request(app).get('/api/products');
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -184,7 +178,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get(`/api/products/${productId!._id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body.data.name);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -195,7 +188,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get('/api/products/invalidid')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Produk tidak ditemukan');
     });
@@ -207,7 +199,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get('/api/search/products')
         .query({ keyword: 'ABC' });
 
-      logger.info(response.body);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -218,7 +209,6 @@ describe('PRODUCT ENDPOINT', () => {
         .get('/api/search/products')
         .query({ keyword: 'invalidkeyword' });
 
-      logger.info(response.body);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Produk tidak ditemukan');
     });
@@ -234,7 +224,6 @@ describe('PRODUCT ENDPOINT', () => {
         `/api/sellers/${seller!._id}/products`
       );
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -246,7 +235,6 @@ describe('PRODUCT ENDPOINT', () => {
         '/api/sellers/invalidid/products'
       );
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Seller tidak ditemukan');
     });
@@ -265,7 +253,6 @@ describe('PRODUCT ENDPOINT', () => {
           name: 'ABC Store 3',
         });
 
-      logger.info(response.body);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('ABC Store 3');
@@ -282,7 +269,6 @@ describe('PRODUCT ENDPOINT', () => {
         .field('name', 'ABC Store 3')
         .attach('image', Buffer.from('mock file content'), 'mock-image.jpg');
 
-      logger.info(response.body);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('ABC Store 3');
@@ -298,7 +284,6 @@ describe('PRODUCT ENDPOINT', () => {
           description: 'Toko ABC Store 3',
         });
 
-      logger.info(response.body);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Produk tidak ditemukan');
     });
@@ -315,7 +300,6 @@ describe('PRODUCT ENDPOINT', () => {
           description: 'Toko ABC Store 3',
         });
 
-      logger.info(response.body);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -333,7 +317,6 @@ describe('PRODUCT ENDPOINT', () => {
           description: 'Toko ABC Store 3',
         });
 
-      logger.info(response.body);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -349,9 +332,6 @@ describe('PRODUCT ENDPOINT', () => {
         .delete(`/api/sellers/products/${productId!._id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body);
-      console.log(response.body);
-
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBe('Produk berhasil dihapus');
@@ -362,7 +342,6 @@ describe('PRODUCT ENDPOINT', () => {
         .delete('/api/sellers/products/invalidid')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body);
       expect(response.status).toBe(404);
       expect(response.body.errors).toBe('Produk tidak ditemukan');
     });
@@ -372,7 +351,6 @@ describe('PRODUCT ENDPOINT', () => {
         `/api/sellers/products/dummyid`
       );
 
-      logger.info(response.body);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -382,7 +360,6 @@ describe('PRODUCT ENDPOINT', () => {
         .delete(`/api/sellers/products/dummyid`)
         .set('Authorization', `Bearer wrongtoken`);
 
-      logger.info(response.body);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });

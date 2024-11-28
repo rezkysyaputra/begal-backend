@@ -2,7 +2,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import createServer from '../app/server';
 import request from 'supertest';
-import logger from '../utils/logger';
 import { SellerModel } from '../models/sellerModel';
 
 const app = createServer();
@@ -68,7 +67,6 @@ describe('USER ENDPOINT', () => {
         .field('address[detail]', userData.address.detail)
         .attach('image', Buffer.from('mock file content'), 'mock-image.jpg');
 
-      logger.info(response.body.data);
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -79,7 +77,6 @@ describe('USER ENDPOINT', () => {
         .post('/api/users/register')
         .send(userData);
 
-      logger.info(response.body.data);
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -88,7 +85,6 @@ describe('USER ENDPOINT', () => {
     it('should return a validation error with empty payload', async () => {
       const response = await request(app).post('/api/users/register').send({});
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.errors).toBeDefined();
@@ -99,7 +95,6 @@ describe('USER ENDPOINT', () => {
         .post('/api/users/register')
         .send(userData);
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.errors).toBeDefined();
@@ -113,7 +108,6 @@ describe('USER ENDPOINT', () => {
         .send({ email: userData.email, password: userData.password });
 
       token = response.body.token;
-      logger.info(response.body.token);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.token).toBeDefined();
@@ -125,7 +119,6 @@ describe('USER ENDPOINT', () => {
         password: 'wrongpassword',
       });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.errors).toBeDefined();
@@ -138,7 +131,6 @@ describe('USER ENDPOINT', () => {
         .get('/api/users/profile')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -149,7 +141,6 @@ describe('USER ENDPOINT', () => {
         .get('/api/users/profile')
         .set('Authorization', `Bearer wrongtoken`);
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -157,7 +148,6 @@ describe('USER ENDPOINT', () => {
     it('should return a unauthorized error with undefined token', async () => {
       const response = await request(app).get('/api/users/profile');
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -172,7 +162,6 @@ describe('USER ENDPOINT', () => {
         .field('address[detail]', 'Ruko No. 1')
         .attach('image', Buffer.from('mock file content'), 'mock-image.jpg');
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('John Doe Updated');
@@ -197,7 +186,6 @@ describe('USER ENDPOINT', () => {
           },
         });
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('John Doe');
@@ -216,7 +204,6 @@ describe('USER ENDPOINT', () => {
         .set('Authorization', `Bearer wrongtoken`)
         .send({ name: 'John Doe' });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -226,7 +213,6 @@ describe('USER ENDPOINT', () => {
         .patch('/api/users/profile')
         .send({ name: 'John Doe' });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -239,7 +225,6 @@ describe('USER ENDPOINT', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ old_password: userData.password, new_password: 'newpassword' });
 
-      logger.info(response.body.data);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.message).toBeDefined();
@@ -251,7 +236,6 @@ describe('USER ENDPOINT', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ old_password: 'wrongpassword', new_password: 'newpassword' });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
       expect(response.body.errors).toBeDefined();
@@ -262,7 +246,6 @@ describe('USER ENDPOINT', () => {
         .patch('/api/users/change-password')
         .send({ old_password: userData.password, new_password: 'newpassword' });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -273,7 +256,6 @@ describe('USER ENDPOINT', () => {
         .set('Authorization', `Bearer wrongtoken`)
         .send({ old_password: userData.password, new_password: 'newpassword' });
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -305,7 +287,6 @@ describe('USER ENDPOINT', () => {
         .get('/api/sellers/nearby')
         .set('Authorization', `Bearer ${token}`);
 
-      logger.info(response.body);
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data).toBeDefined();
@@ -314,7 +295,6 @@ describe('USER ENDPOINT', () => {
     it('should return a unauthorized error with undefined token', async () => {
       const response = await request(app).get('/api/sellers/nearby');
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
@@ -324,7 +304,6 @@ describe('USER ENDPOINT', () => {
         .get('/api/sellers/nearby')
         .set('Authorization', `Bearer wrongtoken`);
 
-      logger.info(response.body.errors);
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
     });
