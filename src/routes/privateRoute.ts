@@ -9,6 +9,7 @@ import { ProductController } from '../controllers/productController';
 import upload from '../middlewares/uploadMiddleware';
 import { OrderController } from '../controllers/orderController';
 import { ReviewController } from '../controllers/reviewController';
+import { WithListController } from '../controllers/withListController';
 
 const privateRoute: Router = Router();
 privateRoute.use(authMiddleware);
@@ -121,6 +122,23 @@ privateRoute.delete(
   '/users/reviews/:reviewId',
   roleAuthorization(['user']),
   ReviewController.delete
+);
+
+// WISHLIST
+privateRoute.post(
+  '/users/wishlist',
+  roleAuthorization(['user']),
+  WithListController.create
+);
+privateRoute.get(
+  '/users/wishlist',
+  roleAuthorization(['user']),
+  WithListController.getAll
+);
+privateRoute.delete(
+  '/users/wishlist/:wishlistId',
+  roleAuthorization(['user']),
+  WithListController.delete
 );
 
 export default privateRoute;
