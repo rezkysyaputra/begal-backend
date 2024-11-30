@@ -167,7 +167,22 @@ export class OrderService {
     }
 
     const order = await OrderModel.findById({ _id: id, seller_id: userId });
-    if (!order) throw new ResponseError(404, 'Order tidak ditemukan');
+    if (!order) {
+      throw new ResponseError(404, 'Order tidak ditemukan');
+    }
+
+    if (status === 'cancelled') {
+      order.payment_status = 'failed';
+
+      order.products.forEach(async (product) => {
+        const productData = await ProductModel.findById(product.product_id);
+
+        if (productData) {
+          productData.stock += product.quantity;
+          await productData.save();
+        }
+      });
+    }
 
     order.status = status;
     await order.save();

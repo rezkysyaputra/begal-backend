@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { OrderModel } from '../models/orderModel';
+import { ProductModel } from '../models/productModel';
 
 export class MidtransCallbackController {
   static async handleCallback(
@@ -25,6 +26,15 @@ export class MidtransCallbackController {
       order.payment_status = 'pending';
     } else {
       order.payment_status = 'failed';
+      order.status = 'cancelled';
+
+      order.products.forEach(async (product) => {
+        const productData = await ProductModel.findById(product.product_id);
+        if (productData) {
+          productData.stock += product.quantity;
+          await productData.save();
+        }
+      });
     }
 
     order.transaction_id = transaction_id;
