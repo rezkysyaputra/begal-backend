@@ -47,6 +47,7 @@ describe('USER ENDPOINT', () => {
   });
 
   afterAll(async () => {
+    await mongoose.connection.dropDatabase();
     await mongoose.disconnect();
     await mongoose.connection.close();
   });

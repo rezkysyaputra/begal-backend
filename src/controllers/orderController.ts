@@ -33,6 +33,8 @@ export class OrderController {
    *                 type: string
    *               payment_method:
    *                 type: string
+   *                 enum: ['transfer', 'cash']
+   *                 example: 'transfer'
    *               products:
    *                 type: array
    *                 items:
@@ -42,6 +44,8 @@ export class OrderController {
    *                       type: string
    *                     quantity:
    *                       type: integer
+   *                       example: 2
+   *
    *     responses:
    *       201:
    *         description: Order created successfully
@@ -150,20 +154,85 @@ export class OrderController {
    *             properties:
    *               status:
    *                 type: string
-   *                 enum: ['pending', 'processing', 'shipped', 'delivered', 'canceled']
+   *                 enum: ['pending', 'confirmed', 'delivered', 'cancelled']
+   *                 example: 'confirmed'
    *     responses:
    *       200:
    *         description: Order status updated successfully
    *       400:
    *         description: Bad request
    */
-  static async update(req: Request, res: Response, next: NextFunction) {
+  static async updateOrderStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      const user = (req as any).user;
+      const userId = (req as any).user.id;
       const orderId = req.params.orderId;
       const { status } = req.body;
 
-      const result: Order = await OrderService.update(user, orderId, status);
+      const result: Order = await OrderService.updateOrderStatus(
+        userId,
+        orderId,
+        status
+      );
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/orders/{orderId}/payment-status:
+   *   patch:
+   *     tags: [Order]
+   *     summary: Update payment status   an order by ID only by seller
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: orderId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: string
+   *                 enum: ['pending', 'success', 'failed']
+   *                 example: 'success'
+   *     responses:
+   *       200:
+   *         description: Order payment status updated successfully
+   *       400:
+   *         description: Bad request
+   */
+  static async updatePaymentStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = (req as any).user.id;
+      const orderId = req.params.orderId;
+      const { status } = req.body;
+
+      const result: Order = await OrderService.updatePaymentStatus(
+        userId,
+        orderId,
+        status
+      );
 
       res.status(200).json({
         success: true,

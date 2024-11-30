@@ -99,7 +99,12 @@ privateRoute.get(
 privateRoute.patch(
   '/orders/:orderId',
   roleAuthorization(['seller']),
-  OrderController.update
+  OrderController.updateOrderStatus
+);
+privateRoute.patch(
+  '/orders/:orderId/payment-status',
+  roleAuthorization(['user']),
+  OrderController.updatePaymentStatus
 );
 
 // REVIEW

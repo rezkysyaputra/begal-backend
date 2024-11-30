@@ -6,6 +6,7 @@ import {
   CreateOrderResponse,
   Order,
   StatusOrder,
+  StatusPayment,
   toOrderResponse,
 } from '../types/orderType';
 import ResponseError from '../helpers/responseError';
@@ -156,8 +157,8 @@ export class OrderService {
     return toOrderResponse(order);
   }
 
-  static async update(
-    user: { id: string },
+  static async updateOrderStatus(
+    userId: string,
     id: string,
     status: StatusOrder
   ): Promise<Order> {
@@ -165,10 +166,31 @@ export class OrderService {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    const order = await OrderModel.findById({ _id: id, seller_id: user.id });
+    const order = await OrderModel.findById({ _id: id, seller_id: userId });
     if (!order) throw new ResponseError(404, 'Order tidak ditemukan');
 
     order.status = status;
+    await order.save();
+
+    return toOrderResponse(order);
+  }
+
+  static async updatePaymentStatus(
+    userId: string,
+    order_id: string,
+    payment_status: StatusPayment
+  ): Promise<Order> {
+    if (!mongoose.Types.ObjectId.isValid(order_id)) {
+      throw new ResponseError(404, 'Order tidak ditemukan');
+    }
+
+    const order = await OrderModel.findOne({ _id: order_id, user_id: userId });
+
+    if (!order) {
+      throw new ResponseError(404, 'Order tidak ditemukan');
+    }
+
+    order.payment_status = payment_status;
     await order.save();
 
     return toOrderResponse(order);

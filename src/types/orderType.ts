@@ -53,6 +53,7 @@ export type MidtransResponse = {
 };
 
 export type StatusOrder = 'pending' | 'confirmed' | 'delivered' | 'cancelled';
+export type StatusPayment = 'pending' | 'success' | 'failed';
 
 export const toOrderResponse = (order: any): Order => {
   return {

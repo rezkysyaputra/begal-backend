@@ -37,10 +37,33 @@ const swaggerOptions: Options = {
         Order: OrderModel,
         Review: ReviewModel,
         Notification: NotificationModel,
+        CreateWishListResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            data: {
+              type: 'object',
+              properties: {
+                _id: { type: 'string' },
+                user_id: { type: 'string' },
+                product_id: { type: 'string' },
+                created_at: { type: 'string' },
+                updated_at: { type: 'string' },
+              },
+            },
+          },
+        },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            success: { type: 'boolean' },
+            errors: { type: 'string' },
+          },
+        },
       },
     },
   },
-  apis: ['src/routes/*.ts', 'src/controllers/*.ts'],
+  apis: ['src/routes/*.ts', 'src/controllers/*.ts', 'src/models/*.ts'],
 };
 
 export default swaggerOptions;

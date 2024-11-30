@@ -98,10 +98,10 @@ export class UserController {
    *             properties:
    *               email:
    *                 type: string
-   *                 description: User's email address
+   *                 example: 2E5oR@example.com
    *               password:
    *                 type: string
-   *                 description: User's password
+   *                 example: password123
    *     responses:
    *       200:
    *         description: Login successful
@@ -194,6 +194,10 @@ export class UserController {
    *         description: User information updated successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: User not found
    */
 
   static async update(req: Request, res: Response, next: NextFunction) {
@@ -233,10 +237,10 @@ export class UserController {
    *             properties:
    *               oldPassword:
    *                 type: string
-   *                 description: User's old password
+   *                 example: password123
    *               newPassword:
    *                 type: string
-   *                 description: User's new password
+   *                 example: newpassword
    *     responses:
    *       200:
    *         description: Password changed successfully
