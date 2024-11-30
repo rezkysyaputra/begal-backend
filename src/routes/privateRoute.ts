@@ -103,7 +103,7 @@ privateRoute.patch(
 );
 privateRoute.patch(
   '/orders/:orderId/payment-status',
-  roleAuthorization(['user']),
+  roleAuthorization(['seller']),
   OrderController.updatePaymentStatus
 );
 

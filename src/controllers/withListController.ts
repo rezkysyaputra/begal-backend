@@ -31,16 +31,8 @@ export class WithListController {
    *     responses:
    *       200:
    *         description: Success
-   *         content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/CreateWishListResponse'
    *       400:
    *         description: Bad request
-   *          content:
-   *           application/json:
-   *             schema:
-   *               $ref: '#/components/schemas/ErrorResponse'
    */
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
