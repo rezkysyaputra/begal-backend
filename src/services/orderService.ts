@@ -184,7 +184,10 @@ export class OrderService {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    const order = await OrderModel.findOne({ _id: order_id, user_id: userId });
+    const order = await OrderModel.findOne({
+      _id: order_id,
+      seller_id: userId,
+    });
 
     if (!order) {
       throw new ResponseError(404, 'Order tidak ditemukan');
