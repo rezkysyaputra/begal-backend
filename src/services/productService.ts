@@ -165,7 +165,7 @@ export class ProductService {
 
     const data = {
       ...validatedData,
-      image_url: imageUrl,
+      image_url: imageUrl ?? existingProduct.image_url,
     };
 
     const product = await ProductModel.findByIdAndUpdate(
