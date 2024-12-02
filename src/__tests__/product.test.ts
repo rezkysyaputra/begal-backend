@@ -257,6 +257,7 @@ describe('PRODUCT ENDPOINT', () => {
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
       expect(response.body.data.name).toBe('ABC Store 3');
+      expect(response.body.data.image_url).toBeDefined();
     });
 
     it('should update a product successfully with image ', async () => {
