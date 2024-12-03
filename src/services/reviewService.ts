@@ -74,10 +74,11 @@ export class ReviewService {
       throw new ResponseError(404, 'Seller tidak ditemukan');
     }
 
-    const reviews = await ReviewModel.find({ seller_id: sellerId }).populate(
-      'user_id',
-      'name'
-    );
+    const reviews = await ReviewModel.find({ seller_id: sellerId })
+      .populate('user_id', 'name')
+      .sort({
+        createdAt: -1,
+      });
 
     if (!reviews.length) {
       throw new ResponseError(404, 'Review untuk seller tidak ditemukan');
@@ -93,10 +94,11 @@ export class ReviewService {
   }
 
   static async getAllReviews(user: { id: string }): Promise<ReviewResponse[]> {
-    const reviews = await ReviewModel.find({ seller_id: user.id }).populate(
-      'user_id',
-      'name'
-    );
+    const reviews = await ReviewModel.find({ seller_id: user.id })
+      .populate('user_id', 'name')
+      .sort({
+        createdAt: -1,
+      });
 
     if (!reviews.length) {
       throw new ResponseError(404, 'Review untuk seller tidak ditemukan');

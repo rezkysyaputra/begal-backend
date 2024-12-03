@@ -187,6 +187,26 @@ export class OrderController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/orders/{orderId}/delivered:
+   *   patch:
+   *     tags: [Order]
+   *     summary: Update status an order by ID only by seller
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: orderId
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Order status updated successfully
+   *       400:
+   *         description: Bad request
+   */
   static async updateOrderStatusDelivered(
     req: Request,
     res: Response,

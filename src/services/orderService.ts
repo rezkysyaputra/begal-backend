@@ -139,7 +139,9 @@ export class OrderService {
 
   static async list(user: { id: string; role: string }): Promise<Order[]> {
     const filterId = user.role === 'user' ? 'user_id' : 'seller_id';
-    const orders = await OrderModel.find({ [filterId]: user.id });
+    const orders = await OrderModel.find({ [filterId]: user.id }).sort({
+      createdAt: -1,
+    });
     return orders.map((order) => toOrderResponse(order));
   }
 

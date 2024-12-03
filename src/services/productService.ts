@@ -53,7 +53,9 @@ export class ProductService {
   }
 
   static async list(user: { id: string }): Promise<ProductResponse[]> {
-    const products = await ProductModel.find({ seller_id: user.id });
+    const products = await ProductModel.find({ seller_id: user.id }).sort({
+      createdAt: -1,
+    });
     return products.map((product) => toProductResponse(product));
   }
 
@@ -80,7 +82,7 @@ export class ProductService {
   }
 
   static async getAllProducts(): Promise<ProductResponse[]> {
-    const products = await ProductModel.find({});
+    const products = await ProductModel.find({}).sort({ createdAt: -1 });
     return products.map((product) => toProductResponse(product));
   }
 

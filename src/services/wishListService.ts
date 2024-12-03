@@ -46,9 +46,11 @@ export class WishListService {
   }
 
   static async getAll(userId: string): Promise<WishListResponse[]> {
-    const wishLists = await WishListModel.find({ user_id: userId }).populate(
-      'product_id'
-    );
+    const wishLists = await WishListModel.find({ user_id: userId })
+      .populate('product_id')
+      .sort({
+        createdAt: -1,
+      });
 
     return wishLists.map((wishList) => toWishListResponse(wishList));
   }
