@@ -50,10 +50,6 @@ export class WishListService {
       'product_id'
     );
 
-    if (!wishLists || wishLists.length === 0) {
-      throw new ResponseError(404, 'Daftar wishlist tidak ditemukan');
-    }
-
     return wishLists.map((wishList) => toWishListResponse(wishList));
   }
 

@@ -102,6 +102,11 @@ privateRoute.patch(
   OrderController.updateOrderStatus
 );
 privateRoute.patch(
+  '/orders/:orderId/status-delivered',
+  roleAuthorization(['user']),
+  OrderController.updateOrderStatusDelivered
+);
+privateRoute.patch(
   '/orders/:orderId/payment-status',
   roleAuthorization(['seller']),
   OrderController.updatePaymentStatus

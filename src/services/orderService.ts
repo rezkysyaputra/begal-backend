@@ -190,6 +190,32 @@ export class OrderService {
     return toOrderResponse(order);
   }
 
+  static async updateOrderStatusDelivered(
+    userId: string,
+    orderId: string
+  ): Promise<Order> {
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+      throw new ResponseError(404, 'Order tidak ditemukan');
+    }
+
+    const order = await OrderModel.findById({
+      _id: orderId,
+      user_id: userId,
+    });
+    if (!order) {
+      throw new ResponseError(404, 'Order tidak ditemukan');
+    }
+
+    if (order.status === 'delivered') {
+      throw new ResponseError(400, 'Order sudah dikirim');
+    }
+
+    order.status = 'delivered';
+    await order.save();
+
+    return toOrderResponse(order);
+  }
+
   static async updatePaymentStatus(
     userId: string,
     order_id: string,

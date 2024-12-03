@@ -7,6 +7,7 @@ import { errorLogger, requestLogger } from '../middlewares/loggerMiddleware';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import swaggerOptions from '../config/swagger';
+import bodyParser from 'body-parser';
 
 const createServer = (): Application => {
   const app: Application = express();

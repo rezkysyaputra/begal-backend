@@ -187,6 +187,29 @@ export class OrderController {
     }
   }
 
+  static async updateOrderStatusDelivered(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const userId = (req as any).user.id;
+      const orderId = req.params.orderId;
+
+      const result: Order = await OrderService.updateOrderStatusDelivered(
+        userId,
+        orderId
+      );
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * @swagger
    * /api/orders/{orderId}/payment-status:

@@ -41,10 +41,7 @@ export class ReviewService {
       user_id: user.id,
     };
 
-    console.log(newData);
-
     const newReview = await ReviewModel.create(newData);
-    console.log(newData);
     const reviews = await ReviewModel.find({
       seller_id: validatedData.seller_id,
     });
@@ -66,8 +63,6 @@ export class ReviewService {
       ...toReviewResponse(newReview),
       user_name: (userReviews as any).name,
     };
-
-    console.log(response);
 
     return response;
   }
