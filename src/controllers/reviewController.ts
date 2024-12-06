@@ -17,7 +17,7 @@ export class ReviewController {
    *     summary: Create a new review only by user
    *     tags: [Review]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -100,7 +100,7 @@ export class ReviewController {
    *     summary: Get all reviews only by seller
    *     tags: [Review]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     responses:
    *       200:
    *         description: Reviews retrieved successfully
@@ -128,7 +128,7 @@ export class ReviewController {
    *     summary: Update a review by ID only by user
    *     tags: [Review]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     parameters:
    *       - in: path
    *         name: reviewId
@@ -180,7 +180,7 @@ export class ReviewController {
    *     summary: Delete a review by ID only by user
    *     tags: [Review]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     parameters:
    *       - in: path
    *         name: reviewId

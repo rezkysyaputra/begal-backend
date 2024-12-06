@@ -3,8 +3,12 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import { SellerModel } from '../models/sellerModel';
 import createServer from '../app/server';
-import { hashPassword } from '../utils/testUtils';
 import { ProductModel } from '../models/productModel';
+import { bcryptPassword } from '../helpers/bcryptPassword';
+import {
+  setupMongoMemoryServer,
+  teardownMongoMemoryServer,
+} from '../test/mongoMemoryServer';
 
 jest.mock('cloudinary', () => ({
   v2: {
@@ -23,13 +27,13 @@ jest.mock('cloudinary', () => ({
 
 describe('PRODUCT ENDPOINT', () => {
   let token: string;
+  let mongoServer: MongoMemoryServer;
   const app = createServer();
 
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
+    mongoServer = await setupMongoMemoryServer();
 
-    const hashedPassword = await hashPassword('securepassword');
+    const hashedPassword = await bcryptPassword('securepassword');
     await SellerModel.create({
       name: 'ABC Store',
       owner_name: 'Alice Doe',
@@ -59,9 +63,7 @@ describe('PRODUCT ENDPOINT', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.disconnect();
-    await mongoose.connection.close();
+    await teardownMongoMemoryServer(mongoServer);
   });
 
   describe('POST /api/sellers/products', () => {

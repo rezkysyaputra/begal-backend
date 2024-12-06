@@ -27,114 +27,97 @@ export class OrderService {
     }
 
     const matchUser = await UserModel.findById(user.id);
-    if (!matchUser) throw new ResponseError(404, 'User tidak ditemukan');
+    if (!matchUser) {
+      throw new ResponseError(404, 'User tidak ditemukan');
+    }
 
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    let transactionSuccessful = false;
+    const productIds = orderData.products.map(
+      (product: { product_id: string }) => product.product_id
+    );
 
-    try {
-      const productIds = orderData.products.map(
-        (product: { product_id: string }) => product.product_id
+    const invalidProductId = productIds.find(
+      (id) => !mongoose.Types.ObjectId.isValid(id)
+    );
+
+    if (invalidProductId) {
+      throw new ResponseError(
+        404,
+        `Product ID '${invalidProductId}' tidak valid`
       );
-      const products = await ProductModel.find({
-        _id: { $in: productIds },
-      }).session(session);
+    }
 
-      if (products.length !== orderData.products.length) {
-        throw new ResponseError(404, 'Beberapa produk tidak ditemukan');
+    const products = await ProductModel.find({ _id: { $in: productIds } });
+
+    if (products.length !== orderData.products.length) {
+      throw new ResponseError(404, 'Beberapa produk tidak ditemukan');
+    }
+
+    const detailedProducts = orderData.products.map((orderProduct: any) => {
+      const product = products.find(
+        (p) => (p._id as string).toString() === orderProduct.product_id
+      );
+      if (!product) {
+        throw new ResponseError(404, 'Produk tidak ditemukan');
       }
-
-      orderData.products.forEach((orderProduct: any) => {
-        const product = products.find(
-          (p) => (p._id as string).toString() === orderProduct.product_id
+      if (product.stock < orderProduct.quantity) {
+        throw new ResponseError(
+          400,
+          `Stok tidak mencukupi untuk produk ${product.name}`
         );
-        if (!product) {
-          throw new ResponseError(404, 'Produk tidak ditemukan');
-        }
-        if (product.stock < orderProduct.quantity) {
-          throw new ResponseError(
-            400,
-            `Stok tidak mencukupi untuk produk ${product.name}`
-          );
-        }
-      });
-
-      const detailedProducts = orderData.products.map((orderProduct: any) => {
-        const product = products.find(
-          (p) => (p._id as string).toString() === orderProduct.product_id
-        )!;
-        product.stock -= orderProduct.quantity;
-        product.save({ session });
-
-        return {
-          product_id: product._id,
-          name: product.name,
-          quantity: orderProduct.quantity,
-          price: product.price,
-          image_url: product.image_url ?? null,
-        };
-      });
-
-      const totalPrice: number = detailedProducts.reduce(
-        (total: number, product: any) =>
-          total + product.price * product.quantity,
-        0
-      );
-
-      const order = await OrderModel.create(
-        [
-          {
-            user_id: user.id,
-            seller_id: orderData.seller_id,
-            products: detailedProducts,
-            delivery_address: matchUser.address,
-            total_price: totalPrice,
-            payment_method: orderData.payment_method,
-            payment_status: 'pending',
-            transaction_id: '',
-            status: 'pending',
-          },
-        ],
-        { session }
-      );
-
-      if (orderData.payment_method === 'cash') {
-        await session.commitTransaction();
-        transactionSuccessful = true;
-        return {
-          order_id: (order[0]._id as string).toString(),
-          payment_method: order[0].payment_method,
-        };
       }
 
-      let paymentData: any;
-      try {
-        paymentData = await MidtransService.createTransaction(order[0]);
-      } catch (error) {
-        throw new ResponseError(500, 'Transaksi pembayaran gagal dilakukan');
-      }
-
-      order[0].payment_response = paymentData;
-      await order[0].save({ session });
-
-      await session.commitTransaction();
-      transactionSuccessful = true;
+      product.stock -= orderProduct.quantity;
+      product.save();
 
       return {
-        order_id: order[0]._id as string,
-        token: paymentData.token,
-        redirect_url: paymentData.redirect_url,
-        payment_method: order[0].payment_method,
+        product_id: product._id,
+        name: product.name,
+        quantity: orderProduct.quantity,
+        price: product.price,
+        image_url: product.image_url ?? null,
       };
-    } catch (error) {
-      if (!transactionSuccessful) {
-        await session.abortTransaction();
-      }
-      throw error;
-    } finally {
-      session.endSession();
+    });
+
+    const totalPrice: number = detailedProducts.reduce(
+      (total: number, product: any) => total + product.price * product.quantity,
+      0
+    );
+
+    const order = await OrderModel.create({
+      user_id: user.id,
+      seller_id: orderData.seller_id,
+      products: detailedProducts,
+      delivery_address: matchUser.address,
+      total_price: totalPrice,
+      payment_method: orderData.payment_method,
+      payment_status: 'pending',
+      transaction_id: '',
+      status: 'pending',
+    });
+
+    if (orderData.payment_method === 'cash') {
+      return {
+        order_id: order._id as string,
+        payment_method: order.payment_method,
+      };
     }
+
+    let paymentData: any;
+    try {
+      paymentData = await MidtransService.createTransaction(order);
+    } catch (error) {
+      throw new ResponseError(500, 'Transaksi pembayaran gagal dilakukan');
+    }
+
+    order.payment_response = paymentData;
+    await order.save();
+
+    return {
+      order_id: order._id as string,
+      token: paymentData.token,
+      redirect_url: paymentData.redirect_url,
+      payment_method: order.payment_method,
+    };
   }
 
   static async list(user: { id: string; role: string }): Promise<Order[]> {
@@ -159,21 +142,26 @@ export class OrderService {
     return toOrderResponse(order);
   }
 
-  static async updateOrderStatus(
+  static async updateOrderStatusSeller(
     sellerId: string,
     id: string,
-    status: StatusOrder
+    status: string
   ): Promise<Order> {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
+
+    const statusValidated = Validation.validate(
+      OrderValidation.ORDER_STATUS_SELLER,
+      status
+    );
 
     const order = await OrderModel.findById({ _id: id, seller_id: sellerId });
     if (!order) {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    if (status === 'cancelled') {
+    if (statusValidated === 'cancelled') {
       order.payment_status = 'failed';
 
       order.products.forEach(async (product) => {
@@ -186,19 +174,25 @@ export class OrderService {
       });
     }
 
-    order.status = status;
+    order.status = statusValidated as StatusOrder;
     await order.save();
 
     return toOrderResponse(order);
   }
 
-  static async updateOrderStatusDelivered(
+  static async updateOrderStatusUser(
     userId: string,
-    orderId: string
+    orderId: string,
+    status: string
   ): Promise<Order> {
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
+
+    const statusValidated = Validation.validate(
+      OrderValidation.ORDER_STATUS_USER,
+      status
+    );
 
     const order = await OrderModel.findById({
       _id: orderId,
@@ -208,11 +202,20 @@ export class OrderService {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    if (order.status === 'delivered') {
-      throw new ResponseError(400, 'Order sudah dikirim');
+    if (statusValidated === 'cancelled') {
+      order.payment_status = 'failed';
+
+      order.products.forEach(async (product) => {
+        const productData = await ProductModel.findById(product.product_id);
+
+        if (productData) {
+          productData.stock += product.quantity;
+          await productData.save();
+        }
+      });
     }
 
-    order.status = 'delivered';
+    order.status = statusValidated as StatusOrder;
     await order.save();
 
     return toOrderResponse(order);
@@ -220,15 +223,20 @@ export class OrderService {
 
   static async updatePaymentStatus(
     userId: string,
-    order_id: string,
-    payment_status: StatusPayment
+    orderId: string,
+    paymentStatus: string
   ): Promise<Order> {
-    if (!mongoose.Types.ObjectId.isValid(order_id)) {
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
+    const paymentStatusValidated = Validation.validate(
+      OrderValidation.ORDER_STATUS_PAYMENT,
+      paymentStatus
+    );
+
     const order = await OrderModel.findOne({
-      _id: order_id,
+      _id: orderId,
       seller_id: userId,
     });
 
@@ -236,7 +244,7 @@ export class OrderService {
       throw new ResponseError(404, 'Order tidak ditemukan');
     }
 
-    if (payment_status === 'failed') {
+    if (paymentStatusValidated === 'failed') {
       order.status = 'cancelled';
 
       order.products.forEach(async (product) => {
@@ -249,7 +257,7 @@ export class OrderService {
       });
     }
 
-    order.payment_status = payment_status;
+    order.payment_status = paymentStatusValidated as StatusPayment;
     await order.save();
 
     return toOrderResponse(order);

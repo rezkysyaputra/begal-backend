@@ -2,9 +2,13 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import createServer from '../app/server';
 import { UserModel } from '../models/userModel';
-import { hashPassword } from '../utils/testUtils';
 import request from 'supertest';
 import { SellerModel } from '../models/sellerModel';
+import { bcryptPassword } from '../helpers/bcryptPassword';
+import {
+  setupMongoMemoryServer,
+  teardownMongoMemoryServer,
+} from '../test/mongoMemoryServer';
 
 describe('REVIEW ENDPOINT', () => {
   let userToken: string;
@@ -12,13 +16,13 @@ describe('REVIEW ENDPOINT', () => {
   let sellerId: string;
   let userId: string;
   let reviewId: string;
+  let mongoServer: MongoMemoryServer;
   const app = createServer();
 
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
+    mongoServer = await setupMongoMemoryServer();
 
-    const hashedPassword = await hashPassword('securepassword');
+    const hashedPassword = await bcryptPassword('securepassword');
     const user = await UserModel.create({
       name: 'Jane Doe',
       email: 'janedoe@gmail.com',
@@ -72,9 +76,7 @@ describe('REVIEW ENDPOINT', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.disconnect();
-    await mongoose.connection.close();
+    await teardownMongoMemoryServer(mongoServer);
   });
 
   describe('POST /api/users/reviews', () => {

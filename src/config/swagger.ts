@@ -4,7 +4,6 @@ import { SellerModel } from '../models/sellerModel';
 import { ProductModel } from '../models/productModel';
 import { OrderModel } from '../models/orderModel';
 import { ReviewModel } from '../models/reviewModel';
-import { NotificationModel } from '../models/notificationModel';
 
 const swaggerOptions: Options = {
   definition: {
@@ -28,6 +27,20 @@ const swaggerOptions: Options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
+          description:
+            'Token untuk autentikasi user dan seller, dapat digunakan pada endpoint yang membutuhkan autentikasi user atau seller',
+        },
+        userAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Token untuk autentikasi user',
+        },
+        sellerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Token untuk autentikasi seller',
         },
       },
       schemas: {
@@ -36,7 +49,6 @@ const swaggerOptions: Options = {
         Product: ProductModel,
         Order: OrderModel,
         Review: ReviewModel,
-        Notification: NotificationModel,
         CreateWishListResponse: {
           type: 'object',
           properties: {

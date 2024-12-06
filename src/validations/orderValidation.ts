@@ -11,4 +11,18 @@ export class OrderValidation {
     ),
     payment_method: z.enum(['transfer', 'cash']),
   });
+
+  static readonly ORDER_STATUS_SELLER: ZodType = z.enum([
+    'confirmed',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ]);
+
+  static readonly ORDER_STATUS_USER: ZodType = z.enum([
+    'delivered',
+    'cancelled',
+  ]);
+
+  static readonly ORDER_STATUS_PAYMENT: ZodType = z.enum(['success', 'failed']);
 }

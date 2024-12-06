@@ -2,6 +2,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import createServer from '../app/server';
 import request from 'supertest';
+import {
+  setupMongoMemoryServer,
+  teardownMongoMemoryServer,
+} from '../test/mongoMemoryServer';
 
 const app = createServer();
 
@@ -44,16 +48,14 @@ const sellerData = {
 
 describe('SELLER ENDPOINT', () => {
   let token: string;
+  let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-    const mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
+    mongoServer = await setupMongoMemoryServer();
   });
 
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await mongoose.disconnect();
-    await mongoose.connection.close();
+    await teardownMongoMemoryServer(mongoServer);
   });
 
   describe('POST /api/sellers/register', () => {

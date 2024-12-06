@@ -9,7 +9,7 @@ import { ProductController } from '../controllers/productController';
 import upload from '../middlewares/uploadMiddleware';
 import { OrderController } from '../controllers/orderController';
 import { ReviewController } from '../controllers/reviewController';
-import { WithListController } from '../controllers/withListController';
+import { WishListController } from '../controllers/wishListController';
 
 const privateRoute: Router = Router();
 privateRoute.use(authMiddleware);
@@ -97,14 +97,14 @@ privateRoute.get(
   OrderController.get
 );
 privateRoute.patch(
-  '/orders/:orderId',
+  '/sellers/orders/:orderId',
   roleAuthorization(['seller']),
-  OrderController.updateOrderStatus
+  OrderController.updateOrderStatusSeller
 );
 privateRoute.patch(
-  '/orders/:orderId/status-delivered',
+  '/users/orders/:orderId',
   roleAuthorization(['user']),
-  OrderController.updateOrderStatusDelivered
+  OrderController.updateOrderStatusUser
 );
 privateRoute.patch(
   '/orders/:orderId/payment-status',
@@ -138,17 +138,17 @@ privateRoute.delete(
 privateRoute.post(
   '/users/wishlist',
   roleAuthorization(['user']),
-  WithListController.create
+  WishListController.create
 );
 privateRoute.get(
   '/users/wishlist',
   roleAuthorization(['user']),
-  WithListController.getAll
+  WishListController.getAll
 );
 privateRoute.delete(
   '/users/wishlist/:wishlistId',
   roleAuthorization(['user']),
-  WithListController.delete
+  WishListController.delete
 );
 
 export default privateRoute;

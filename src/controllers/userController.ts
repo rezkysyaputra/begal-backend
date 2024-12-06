@@ -126,10 +126,10 @@ export class UserController {
    * @swagger
    * /api/users/profile:
    *   get:
-   *     summary: Get user information
+   *     summary: Get user information only by user
    *     tags: [User]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     responses:
    *       200:
    *         description: User information retrieved successfully
@@ -154,10 +154,10 @@ export class UserController {
    * @swagger
    * /api/users:
    *   patch:
-   *     summary: Update user information
+   *     summary: Update user information only by user
    *     tags: [User]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     requestBody:
    *       required: false
    *       content:
@@ -221,10 +221,10 @@ export class UserController {
    * @swagger
    * /api/users/change-password:
    *   patch:
-   *     summary: Change user password
+   *     summary: Change user password only by user
    *     tags: [User]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     requestBody:
    *       required: true
    *       content:

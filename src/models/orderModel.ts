@@ -74,7 +74,7 @@ const orderSchema = new Schema<Order>(
     payment_expiry: { type: Date },
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'delivered', 'cancelled'],
+      enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
     },
   },

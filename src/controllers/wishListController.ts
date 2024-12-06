@@ -7,7 +7,7 @@ import { WishListService } from '../services/wishListService';
  *   name: WishList
  *   description: WishList management
  */
-export class WithListController {
+export class WishListController {
   /**
    * @swagger
    * /api/wishlists:
@@ -15,7 +15,7 @@ export class WithListController {
    *     tags: [WishList]
    *     summary: Create wishlist only by user
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -41,7 +41,7 @@ export class WithListController {
 
       const result = await WishListService.create(data);
 
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         data: result,
       });
@@ -57,7 +57,7 @@ export class WithListController {
    *     tags: [WishList]
    *     summary: Get all wishlists only by user
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     responses:
    *       200:
    *         description: Success
@@ -85,7 +85,7 @@ export class WithListController {
    *     tags: [WishList]
    *     summary: Delete wishlist by ID only by user
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     parameters:
    *       - in: path
    *         name: wishlistId

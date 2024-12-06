@@ -142,10 +142,10 @@ export class SellerController {
    * @swagger
    * /api/sellers/profile:
    *   get:
-   *     summary: Get seller information
+   *     summary: Get seller information only by seller
    *     tags: [Seller]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     responses:
    *       200:
    *         description: Seller information retrieved successfully
@@ -198,7 +198,7 @@ export class SellerController {
    *     summary: Get nearby sellers only by user
    *     tags: [User]
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     responses:
    *       200:
    *         description: Nearby sellers retrieved successfully
@@ -228,10 +228,10 @@ export class SellerController {
    * @swagger
    * /api/sellers:
    *   patch:
-   *     summary: Update seller information
+   *     summary: Update seller information only by seller
    *     tags: [Seller]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     requestBody:
    *       required: false
    *       content:
@@ -299,10 +299,10 @@ export class SellerController {
    * @swagger
    * /api/sellers/change-password:
    *   patch:
-   *     summary: Change seller password
+   *     summary: Change seller password only by seller
    *     tags: [Seller]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     requestBody:
    *       required: true
    *       content:

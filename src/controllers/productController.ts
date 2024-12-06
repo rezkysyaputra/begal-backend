@@ -20,7 +20,7 @@ export class ProductController {
    *     summary: Create a new product only by seller
    *     tags: [Product]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -83,7 +83,7 @@ export class ProductController {
    *     summary: Get list products only by seller
    *     tags: [Product]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     responses:
    *       200:
    *         description: Products retrieved successfully
@@ -108,7 +108,7 @@ export class ProductController {
    * @swagger
    * /api/products/{productId}:
    *   get:
-   *     summary: Get a product by ID only by user or seller
+   *     summary: Get a product by ID for user and seller
    *     tags: [Product]
    *     parameters:
    *       - in: path
@@ -238,7 +238,7 @@ export class ProductController {
    *     summary: Update a product by ID only by seller
    *     tags: [Product]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     requestBody:
    *       required: false
    *       content:
@@ -299,7 +299,7 @@ export class ProductController {
    *     summary: Delete a product by ID  only by seller
    *     tags: [Product]
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     parameters:
    *       - in: path
    *         name: productId

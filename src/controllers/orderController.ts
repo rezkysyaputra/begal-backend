@@ -17,7 +17,7 @@ export class OrderController {
    *       - Order
    *     summary: Create a new order only by user
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -75,7 +75,7 @@ export class OrderController {
    *     tags: [Order]
    *     summary: Get all orders only by user or seller
    *     security:
-   *       - bearerAuth: []
+   *       - bearerAuth : []
    *     responses:
    *       200:
    *         description: Orders retrieved successfully
@@ -133,12 +133,12 @@ export class OrderController {
 
   /**
    * @swagger
-   * /api/orders/{orderId}:
+   * /api/sellers/orders/{orderId}:
    *   patch:
    *     tags: [Order]
    *     summary: Update status an order by ID only by seller
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     parameters:
    *       - in: path
    *         name: orderId
@@ -154,7 +154,7 @@ export class OrderController {
    *             properties:
    *               status:
    *                 type: string
-   *                 enum: ['pending', 'confirmed', 'delivered', 'cancelled']
+   *                 enum: ['confirmed', 'shipped', 'cancelled']
    *                 example: 'confirmed'
    *     responses:
    *       200:
@@ -162,7 +162,7 @@ export class OrderController {
    *       400:
    *         description: Bad request
    */
-  static async updateOrderStatus(
+  static async updateOrderStatusSeller(
     req: Request,
     res: Response,
     next: NextFunction
@@ -172,7 +172,7 @@ export class OrderController {
       const orderId = req.params.orderId;
       const { status } = req.body;
 
-      const result: Order = await OrderService.updateOrderStatus(
+      const result: Order = await OrderService.updateOrderStatusSeller(
         userId,
         orderId,
         status
@@ -189,25 +189,36 @@ export class OrderController {
 
   /**
    * @swagger
-   * /api/orders/{orderId}/delivered:
+   * /api/users/orders/{orderId}:
    *   patch:
    *     tags: [Order]
-   *     summary: Update status an order by ID only by seller
+   *     summary: Update status an order by ID only by user
    *     security:
-   *       - bearerAuth: []
+   *       - userAuth: []
    *     parameters:
    *       - in: path
    *         name: orderId
    *         required: true
    *         schema:
    *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               status:
+   *                 type: string
+   *                 enum: [ 'delivered' ,'cancelled']
+   *                 example: 'confirmed'
    *     responses:
    *       200:
    *         description: Order status updated successfully
    *       400:
    *         description: Bad request
    */
-  static async updateOrderStatusDelivered(
+  static async updateOrderStatusUser(
     req: Request,
     res: Response,
     next: NextFunction
@@ -215,10 +226,12 @@ export class OrderController {
     try {
       const userId = (req as any).user.id;
       const orderId = req.params.orderId;
+      const { status } = req.body;
 
-      const result: Order = await OrderService.updateOrderStatusDelivered(
+      const result: Order = await OrderService.updateOrderStatusUser(
         userId,
-        orderId
+        orderId,
+        status
       );
 
       res.status(200).json({
@@ -235,9 +248,9 @@ export class OrderController {
    * /api/orders/{orderId}/payment-status:
    *   patch:
    *     tags: [Order]
-   *     summary: Update payment status   an order by ID only by seller
+   *     summary: Update payment status an order by ID only by seller
    *     security:
-   *       - bearerAuth: []
+   *       - sellerAuth: []
    *     parameters:
    *       - in: path
    *         name: orderId
@@ -253,7 +266,7 @@ export class OrderController {
    *             properties:
    *               status:
    *                 type: string
-   *                 enum: ['pending', 'success', 'failed']
+   *                 enum: ['success', 'failed']
    *                 example: 'success'
    *     responses:
    *       200:
