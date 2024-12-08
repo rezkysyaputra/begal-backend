@@ -4,21 +4,18 @@ import {
   teardownMongoMemoryServer,
 } from '../test/mongoMemoryServer';
 import createServer from '../app/server';
-import { createSeller, createUser } from '../test/testUtils';
+import { createUser } from '../test/testUtils';
 import supertest from 'supertest';
 import { UserModel } from '../models/userModel';
-import { SellerModel } from '../models/sellerModel';
 
 describe('AUTH FORGOT PASSWORD ENDPOINT', () => {
   let user: any;
-  let seller: any;
   let mongoServer: MongoMemoryServer;
   const app = createServer();
 
   beforeAll(async () => {
     mongoServer = await setupMongoMemoryServer();
     user = await createUser();
-    seller = await createSeller();
   });
 
   afterAll(async () => {
@@ -74,8 +71,6 @@ describe('AUTH FORGOT PASSWORD ENDPOINT', () => {
         role: 'user',
       });
 
-    console.log(response.body);
-
     expect(response.status).toBe(401);
     expect(response.body.errors).toBe(
       'Kode verifikasi tidak valid atau telah kadaluarsa'
@@ -120,8 +115,6 @@ describe('AUTH FORGOT PASSWORD ENDPOINT', () => {
         newPassword: 'newPassword123',
         role: 'user',
       });
-
-    console.log(response.body);
 
     expect(response.status).toBe(404);
     expect(response.body.errors).toBe('User tidak ditemukan');

@@ -1,8 +1,8 @@
+import { bcryptPassword } from '../helpers/bcryptPassword';
 import ResponseError from '../helpers/responseError';
 import { SellerModel } from '../models/sellerModel';
 import { UserModel } from '../models/userModel';
 import { sendVerificationEmail } from '../utils/mailer';
-import bcrypt from 'bcrypt';
 
 const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -59,7 +59,7 @@ export class AuthService {
     const user = await Model.findOne({ email });
     if (!user) throw new ResponseError(404, 'User tidak ditemukan');
 
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = await bcryptPassword(newPassword);
     user.reset_code = undefined;
     user.reset_code_expiry = undefined;
     await user.save();

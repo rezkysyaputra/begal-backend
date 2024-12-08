@@ -1,4 +1,6 @@
+import { Types } from 'mongoose';
 import { bcryptPassword } from '../helpers/bcryptPassword';
+import { OrderModel } from '../models/orderModel';
 import { ProductModel } from '../models/productModel';
 import { SellerModel } from '../models/sellerModel';
 import { UserModel } from '../models/userModel';
@@ -58,4 +60,36 @@ export const createProduct = async (sellerId: string) => {
   });
 
   return product.toObject();
+};
+
+const defaultAddress = {
+  province: 'Test Province',
+  regency: 'Test Regency',
+  district: 'Test District',
+  village: 'Test Village',
+  street: 'Test Street',
+  detail: 'Test Detail',
+};
+
+export const createOrder = async (product: any) => {
+  const order = OrderModel.create({
+    user_id: new Types.ObjectId(),
+    seller_id: new Types.ObjectId(),
+    products: [
+      {
+        product_id: product._id,
+        name: product.name,
+        image_url: product.image_url,
+        quantity: 10,
+        price: product.price,
+      },
+    ],
+    delivery_address: defaultAddress,
+    total_price: 0,
+    payment_method: 'transfer',
+    payment_status: 'pending',
+    status: 'pending',
+  });
+
+  return order;
 };

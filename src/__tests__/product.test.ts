@@ -1,14 +1,13 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 import request from 'supertest';
 import { SellerModel } from '../models/sellerModel';
 import createServer from '../app/server';
 import { ProductModel } from '../models/productModel';
-import { bcryptPassword } from '../helpers/bcryptPassword';
 import {
   setupMongoMemoryServer,
   teardownMongoMemoryServer,
 } from '../test/mongoMemoryServer';
+import { createSeller } from '../test/testUtils';
 
 jest.mock('cloudinary', () => ({
   v2: {
@@ -33,27 +32,7 @@ describe('PRODUCT ENDPOINT', () => {
   beforeAll(async () => {
     mongoServer = await setupMongoMemoryServer();
 
-    const hashedPassword = await bcryptPassword('securepassword');
-    await SellerModel.create({
-      name: 'ABC Store',
-      owner_name: 'Alice Doe',
-      email: 'abcstore@gmail.com',
-      password: hashedPassword,
-      phone: '081234567890',
-      role: 'seller',
-      address: {
-        province: 'DI YOGYAKARTA',
-        regency: 'KOTA YOGYAKARTA',
-        district: 'UMBULHARJO',
-        village: 'MUJA-MUJU',
-        street: 'Jalan Malioboro',
-        detail: 'Toko No. 1',
-      },
-      operational_hours: {
-        open: '08:00',
-        close: '20:00',
-      },
-    });
+    await createSeller();
 
     const response = await request(app)
       .post('/api/sellers/login')

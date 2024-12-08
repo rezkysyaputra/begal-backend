@@ -1,5 +1,4 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 import createServer from '../app/server';
 import { UserModel } from '../models/userModel';
 import request from 'supertest';

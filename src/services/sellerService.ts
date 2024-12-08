@@ -1,6 +1,5 @@
 import { Validation } from '../validations/validation';
 import ResponseError from '../helpers/responseError';
-import bcrypt from 'bcrypt';
 import { CreateJwtToken } from '../helpers/createToken';
 import cloudinary from '../utils/cloudinary';
 import {
@@ -17,6 +16,7 @@ import { SellerValidation } from '../validations/sellerValidation';
 import { SellerModel } from '../models/sellerModel';
 import { extractPublicId } from '../helpers/extractPublicId';
 import { UserModel } from '../models/userModel';
+import { bcryptPassword, comparePassword } from '../helpers/bcryptPassword';
 
 export class SellerService {
   static async register(
@@ -41,7 +41,7 @@ export class SellerService {
       throw new ResponseError(400, 'Email sudah terdaftar');
     }
 
-    validatedData.password = await bcrypt.hash(validatedData.password, 10);
+    validatedData.password = await bcryptPassword(validatedData.password);
 
     let profilePictureUrl: string | null = null;
     if (image) {
@@ -74,7 +74,7 @@ export class SellerService {
     const seller = await SellerModel.findOne({ email: loginData.email });
     if (!seller) throw new ResponseError(400, 'Email atau password salah');
 
-    const isPasswordMatch = await bcrypt.compare(
+    const isPasswordMatch = await comparePassword(
       loginData.password,
       seller.password
     );
@@ -180,13 +180,13 @@ export class SellerService {
     const foundSeller = await SellerModel.findById(seller.id);
     if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
-    const isPasswordMatch = await bcrypt.compare(
+    const isPasswordMatch = await comparePassword(
       data.old_password,
       foundSeller.password
     );
     if (!isPasswordMatch) throw new ResponseError(400, 'Password lama salah');
 
-    const newPassword = await bcrypt.hash(data.new_password, 10);
+    const newPassword = await bcryptPassword(data.new_password);
     await SellerModel.findByIdAndUpdate(seller.id, { password: newPassword });
 
     return 'Password berhasil diubah';

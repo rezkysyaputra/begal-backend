@@ -1,7 +1,6 @@
 import { UserValidation } from '../validations/userValidation';
 import { Validation } from '../validations/validation';
 import ResponseError from '../helpers/responseError';
-import bcrypt from 'bcrypt';
 import {
   CreateUserRequest,
   CreateUserResponse,
@@ -16,6 +15,7 @@ import { UserModel } from '../models/userModel';
 import { CreateJwtToken } from '../helpers/createToken';
 import cloudinary from '../utils/cloudinary';
 import { extractPublicId } from '../helpers/extractPublicId';
+import { bcryptPassword, comparePassword } from '../helpers/bcryptPassword';
 
 export class UserService {
   static async register(
@@ -32,7 +32,7 @@ export class UserService {
       throw new ResponseError(400, 'Email sudah terdaftar');
     }
 
-    validatedData.password = await bcrypt.hash(validatedData.password, 10);
+    validatedData.password = await bcryptPassword(validatedData.password);
 
     let profilePictureUrl: string | null = null;
     if (image) {
@@ -63,7 +63,7 @@ export class UserService {
     const user = await UserModel.findOne({ email: loginData.email });
     if (!user) throw new ResponseError(400, 'Email atau password salah');
 
-    const isPasswordMatch = await bcrypt.compare(
+    const isPasswordMatch = await comparePassword(
       loginData.password,
       user.password
     );
@@ -144,13 +144,13 @@ export class UserService {
     const getUser = await UserModel.findById(user.id);
     if (!getUser) throw new ResponseError(404, 'User tidak ditemukan');
 
-    const isPasswordMatch = await bcrypt.compare(
+    const isPasswordMatch = await comparePassword(
       data.old_password,
       getUser.password
     );
     if (!isPasswordMatch) throw new ResponseError(400, 'Password lama salah');
 
-    const newPassword = await bcrypt.hash(data.new_password, 10);
+    const newPassword = await bcryptPassword(data.new_password);
     await UserModel.findByIdAndUpdate(user.id, { password: newPassword });
 
     return 'Password berhasil diubah';
