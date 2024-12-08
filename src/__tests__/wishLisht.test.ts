@@ -14,7 +14,6 @@ describe('WISHLIST ENDPOINT', () => {
   let userId: string;
   let mongoServer: MongoMemoryServer;
   let productId: string;
-  let orderId: string;
   let wishListId: string;
   const app = createServer();
 
