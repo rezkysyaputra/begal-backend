@@ -11,9 +11,9 @@ import { UserService } from '../services/userService';
 export class UserController {
   /**
    * @swagger
-   /api/users/register:
+   * /api/users/register:
    *   post:
-   *     summary: Register a new user
+   *     summary: Registrasi pengguna baru
    *     tags: [User]
    *     requestBody:
    *       required: true
@@ -21,48 +21,48 @@ export class UserController {
    *         multipart/form-data:
    *           schema:
    *             type: object
-   *             required:
-   *               - name
-   *               - email
-   *               - password
-   *               - phone
-   *               - address
-   *               - role
    *             properties:
    *               image:
    *                 type: string
    *                 format: binary
    *               name:
    *                 type: string
+   *                 example: John Doe
    *               email:
    *                 type: string
+   *                 example: john@example.com
    *               password:
    *                 type: string
+   *                 example: password123
    *               phone:
    *                 type: string
+   *                 example: "+1234567890"
    *               role:
    *                 type: string
    *                 default: user
-   *               address:
-   *                 type: object
-   *                 properties:
-   *                   province:
-   *                     type: string
-   *                   regency:
-   *                     type: string
-   *                   district:
-   *                     type: string
-   *                   village:
-   *                     type: string
-   *                   street:
-   *                     type: string
-   *                   detail:
-   *                     type: string
+   *               address[province]:
+   *                 type: string
+   *                 example: "Central Java"
+   *               address[regency]:
+   *                 type: string
+   *                 example: "Semarang"
+   *               address[district]:
+   *                 type: string
+   *                 example: "Semarang City"
+   *               address[village]:
+   *                 type: string
+   *                 example: "Tembalang"
+   *               address[street]:
+   *                 type: string
+   *                 example: "Jl. Raya Tembalang"
+   *               address[detail]:
+   *                 type: string
+   *                 example: "Near the university"
    *     responses:
    *       201:
-   *         description: User registered successfully
+   *         description: Pengguna berhasil terdaftar
    *       400:
-   *         description: Bad request
+   *         description: Permintaan tidak valid
    */
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -98,7 +98,7 @@ export class UserController {
    *             properties:
    *               email:
    *                 type: string
-   *                 example: 2E5oR@example.com
+   *                 example: john@example.com
    *               password:
    *                 type: string
    *                 example: password123
@@ -152,7 +152,7 @@ export class UserController {
 
   /**
    * @swagger
-   * /api/users:
+   * /api/users/profile:
    *   patch:
    *     summary: Update user information only by user
    *     tags: [User]
@@ -170,25 +170,31 @@ export class UserController {
    *                 format: binary
    *               name:
    *                 type: string
+   *                 example: Jane Doe
    *               email:
    *                 type: string
+   *                 example: jane@example.com
    *               phone:
    *                 type: string
-   *               address:
-   *                 type: object
-   *                 properties:
-   *                   province:
-   *                     type: string
-   *                   regency:
-   *                     type: string
-   *                   district:
-   *                     type: string
-   *                   village:
-   *                     type: string
-   *                   street:
-   *                     type: string
-   *                   detail:
-   *                     type: string
+   *                 example: "+1234567890"
+   *               address[province]:
+   *                 type: string
+   *                 example: "Central Java"
+   *               address[regency]:
+   *                 type: string
+   *                 example: "Semarang"
+   *               address[district]:
+   *                 type: string
+   *                 example: "Semarang City"
+   *               address[village]:
+   *                 type: string
+   *                 example: "Tembalang"
+   *               address[street]:
+   *                 type: string
+   *                 example: "Jl. Raya Tembalang"
+   *               address[detail]:
+   *                 type: string
+   *                 example: "Near the university"
    *     responses:
    *       200:
    *         description: User information updated successfully
@@ -199,7 +205,6 @@ export class UserController {
    *       404:
    *         description: User not found
    */
-
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
@@ -235,17 +240,19 @@ export class UserController {
    *               - oldPassword
    *               - newPassword
    *             properties:
-   *               oldPassword:
+   *               old_password:
    *                 type: string
    *                 example: password123
-   *               newPassword:
+   *               new_password:
    *                 type: string
-   *                 example: newpassword
+   *                 example: newpassword123
    *     responses:
    *       200:
    *         description: Password changed successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
   static async changePassword(req: Request, res: Response, next: NextFunction) {
     try {

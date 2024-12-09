@@ -5,10 +5,8 @@ import {
   setupMongoMemoryServer,
   teardownMongoMemoryServer,
 } from '../test/mongoMemoryServer';
+import { createSeller } from '../test/testUtils';
 
-const app = createServer();
-
-// Mock cloudinary upload
 jest.mock('cloudinary', () => ({
   v2: {
     config: jest.fn(),
@@ -25,9 +23,9 @@ jest.mock('cloudinary', () => ({
 }));
 
 const sellerData = {
-  name: 'ABC Store',
-  owner_name: 'Alice Doe',
-  email: 'abcstore@gmail.com',
+  name: 'Seller ABC',
+  owner_name: 'Test Seller',
+  email: 'sellerabc@gmail.com',
   password: 'securepassword',
   phone: '081234567890',
   role: 'seller',
@@ -47,10 +45,15 @@ const sellerData = {
 
 describe('SELLER ENDPOINT', () => {
   let token: string;
+  let sellerId: string;
   let mongoServer: MongoMemoryServer;
+  const app = createServer();
 
   beforeAll(async () => {
     mongoServer = await setupMongoMemoryServer();
+
+    const seller = await createSeller();
+    sellerId = seller._id as string;
   });
 
   afterAll(async () => {
@@ -151,6 +154,33 @@ describe('SELLER ENDPOINT', () => {
 
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
+    });
+  });
+
+  describe('GET /api/users/sellers/:id', () => {
+    it('should get all sellers by user id successfully ', async () => {
+      const response = await request(app).get(`/api/users/sellers/${sellerId}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+    });
+
+    it('should return a not found error with wrong user id', async () => {
+      const response = await request(app).get('/api/users/sellers/wrongid');
+
+      expect(response.status).toBe(404);
+      expect(response.body.errors).toBe('Seller tidak ditemukan');
+    });
+  });
+
+  describe('GET /api/sellers', () => {
+    it('should get all sellers successfully ', async () => {
+      const response = await request(app).get('/api/sellers');
+
+      expect(response.status).toBe(200);
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
     });
   });
 
@@ -269,16 +299,6 @@ describe('SELLER ENDPOINT', () => {
 
       expect(response.status).toBe(401);
       expect(response.body.errors).toBe('Unauthorized');
-    });
-  });
-
-  describe('GET /api/sellers', () => {
-    it('should get all sellers successfully ', async () => {
-      const response = await request(app).get('/api/sellers');
-
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data).toBeDefined();
     });
   });
 });

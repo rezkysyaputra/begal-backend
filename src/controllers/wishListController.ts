@@ -26,13 +26,16 @@ export class WishListController {
    *               product_id:
    *                 type: string
    *                 format: mongo-id
+   *                 description: The ID of the product to add to the wishlist
    *             example:
    *               product_id: "62a6c3b4c3a4c3a4c3a4c3a4"
    *     responses:
-   *       200:
-   *         description: Success
+   *       201:
+   *         description: Wishlist created successfully
    *       400:
-   *         description: Bad request
+   *         description: Invalid request body
+   *       401:
+   *         description: Unauthorized
    */
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -60,10 +63,13 @@ export class WishListController {
    *       - userAuth: []
    *     responses:
    *       200:
-   *         description: Success
+   *         description: Retrieved all wishlists successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
+
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = (req as any).user.id;
@@ -92,11 +98,17 @@ export class WishListController {
    *         required: true
    *         schema:
    *           type: string
+   *           format: mongo-id
+   *           description: The ID of the wishlist to delete
    *     responses:
    *       200:
-   *         description: Success
+   *         description: Wishlist deleted successfully
    *       400:
-   *         description: Bad request
+   *         description: Invalid wishlist ID
+   *       404:
+   *         description: Wishlist not found
+   *       401:
+   *         description: Unauthorized
    */
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {

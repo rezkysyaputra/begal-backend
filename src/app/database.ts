@@ -1,11 +1,14 @@
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import logger from '../utils/logger';
 
 dotenv.config();
 const connectDB = async (): Promise<void> => {
   try {
-    await mongoose.connect(process.env.MONGO_URI as string);
+    const env = process.env.NODE_ENV?.toLowerCase() || 'production';
+    const uri =
+      env === 'development' ? process.env.MONGO_URI_DEV : process.env.MONGO_URI;
+    await mongoose.connect(uri as string);
 
     logger.info('MongoDB Connected Successfully');
   } catch (err) {

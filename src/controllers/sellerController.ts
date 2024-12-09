@@ -19,65 +19,62 @@ export class SellerController {
    *   post:
    *     tags:
    *       - Seller
-   *     name: Register a new seller
-   *     summary: Register a new seller
+   *     summary: Registrasi penjual baru
    *     requestBody:
    *       required: true
    *       content:
    *         multipart/form-data:
    *           schema:
    *             type: object
-   *             required:
-   *               - owner_name
-   *               - name
-   *               - email
-   *               - password
-   *               - phone
-   *               - address
-   *               - role
-   *               - operational_hours
    *             properties:
-   *               owner_name:
-   *                 type: string
-   *               name:
-   *                 type: string
-   *               email:
-   *                 type: string
-   *               password:
-   *                 type: string
-   *               phone:
-   *                 type: string
-   *               address:
-   *                 type: object
-   *                 properties:
-   *                   province:
-   *                     type: string
-   *                   regency:
-   *                     type: string
-   *                   district:
-   *                     type: string
-   *                   village:
-   *                     type: string
-   *                   street:
-   *                     type: string
-   *                   detail:
-   *                     type: string
-   *               operational_hours:
-   *                 type: object
-   *                 properties:
-   *                   open:
-   *                     type: string
-   *                   close:
-   *                     type: string
-   *               role:
-   *                 type: string
-   *                 default: seller
    *               image:
    *                 type: string
    *                 format: binary
+   *               owner_name:
+   *                 type: string
+   *                 example: John Doe
+   *               name:
+   *                 type: string
+   *                 example: Toko Berkah
+   *               email:
+   *                 type: string
+   *                 example: john@example.com
+   *               password:
+   *                 type: string
+   *                 example: password123
+   *               phone:
+   *                 type: string
+   *                 example: "+6281234567890"
+   *               role:
+   *                 type: string
+   *                 default: seller
+   *               address[province]:
+   *                 type: string
+   *                 example: "Central Java"
+   *               address[regency]:
+   *                 type: string
+   *                 example: "Semarang"
+   *               address[district]:
+   *                 type: string
+   *                 example: "Semarang City"
+   *               address[village]:
+   *                 type: string
+   *                 example: "Tembalang"
+   *               address[street]:
+   *                 type: string
+   *                 example: "Jl. Raya Tembalang"
+   *               address[detail]:
+   *                 type: string
+   *                 example: "Near the university"
+   *               operational_hours[open]:
+   *                 type: string
+   *                 example: "08:00"
+   *               operational_hours[close]:
+   *                 type: string
+   *                 example: "22:00"
    *     responses:
    *       201:
-   *         description: Created
+   *         description: Created successfully
    *       400:
    *         description: Bad Request
    */
@@ -116,8 +113,10 @@ export class SellerController {
    *             properties:
    *               email:
    *                 type: string
+   *                 example: john@example.com
    *               password:
    *                 type: string
+   *                 example: password123
    *     responses:
    *       200:
    *         description: OK
@@ -151,11 +150,52 @@ export class SellerController {
    *         description: Seller information retrieved successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
+   *
    */
   static async get(req: Request, res: Response, next: NextFunction) {
     try {
       const user = (req as any).user;
       const result = await SellerService.get(user);
+
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/sellers/{sellerId}:
+   *   get:
+   *     summary: Get seller information only by seller
+   *     tags: [Seller]
+   *     parameters:
+   *       - in: path
+   *         name: sellerId
+   *         required: true
+   *         schema:
+   *           type: string
+   *           format: mongo-id
+   *           description: The ID of the sellerId to get seller information
+   *     responses:
+   *       200:
+   *         description: Seller information retrieved successfully
+   *       400:
+   *         description: Bad request
+   *       404:
+   *         description: Seller not found
+   *       401:
+   *         description: Unauthorized
+   */
+  static async getById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { sellerId } = req.params;
+      const result = await SellerService.getById(sellerId);
 
       res.status(200).json({
         success: true,
@@ -204,6 +244,8 @@ export class SellerController {
    *         description: Nearby sellers retrieved successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
   static async getNearbySellers(
     req: Request,
@@ -226,9 +268,9 @@ export class SellerController {
 
   /**
    * @swagger
-   * /api/sellers:
+   * /api/sellers/profile:
    *   patch:
-   *     summary: Update seller information only by seller
+   *     summary: Perbarui informasi penjual hanya oleh penjual
    *     tags: [Seller]
    *     security:
    *       - sellerAuth: []
@@ -244,39 +286,49 @@ export class SellerController {
    *                 format: binary
    *               owner_name:
    *                 type: string
+   *                 example: Jane Doe
    *               name:
    *                 type: string
+   *                 example: Toko Makmur
    *               email:
    *                 type: string
+   *                 example: jane@example.com
    *               phone:
    *                 type: string
-   *               address:
-   *                 type: object
-   *                 properties:
-   *                   province:
-   *                     type: string
-   *                   regency:
-   *                     type: string
-   *                   district:
-   *                     type: string
-   *                   village:
-   *                     type: string
-   *                   street:
-   *                     type: string
-   *                   detail:
-   *                     type: string
-   *               operational_hours:
-   *                 type: object
-   *                 properties:
-   *                   open:
-   *                     type: string
-   *                   close:
-   *                     type: string
+   *                 example: "+6281234567890"
+   *               address[province]:
+   *                 type: string
+   *                 example: "West Java"
+   *               address[regency]:
+   *                 type: string
+   *                 example: "Bandung"
+   *               address[district]:
+   *                 type: string
+   *                 example: "Bandung City"
+   *               address[village]:
+   *                 type: string
+   *                 example: "Cihampelas"
+   *               address[street]:
+   *                 type: string
+   *                 example: "Jl. Cihampelas"
+   *               address[detail]:
+   *                 type: string
+   *                 example: "Near the mall"
+   *               operational_hours[open]:
+   *                 type: string
+   *                 example: "09:00"
+   *               operational_hours[close]:
+   *                 type: string
+   *                 example: "21:00"
    *     responses:
    *       200:
-   *         description: Updated
+   *         description: Updated seller information successfully
    *       400:
-   *         description: Bad Request
+   *         description: Bad request
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Seller not found
    */
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
@@ -313,15 +365,19 @@ export class SellerController {
    *               - oldPassword
    *               - newPassword
    *             properties:
-   *               oldPassword:
+   *               old_password:
    *                 type: string
-   *               newPassword:
+   *                 example: password123
+   *               new_password:
    *                 type: string
+   *                 example: newpassword123
    *     responses:
    *       200:
    *         description: Password changed successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
   static async changePassword(req: Request, res: Response, next: NextFunction) {
     try {

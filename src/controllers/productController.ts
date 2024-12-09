@@ -35,12 +35,16 @@ export class ProductController {
    *             properties:
    *               name:
    *                 type: string
+   *                 example: "Product 1"
    *               description:
    *                 type: string
+   *                 example: "This is a product"
    *               price:
    *                 type: number
+   *                 example: 10000
    *               stock:
    *                 type: number
+   *                 example: 10
    *               image:
    *                 type: string
    *                 format: binary
@@ -49,6 +53,8 @@ export class ProductController {
    *         description: Product created successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
@@ -89,6 +95,8 @@ export class ProductController {
    *         description: Products retrieved successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
    */
   static async list(req: Request, res: Response, next: NextFunction) {
     try {
@@ -121,6 +129,8 @@ export class ProductController {
    *         description: Product retrieved successfully
    *       400:
    *         description: Bad request
+   *       404:
+   *         description: Product not found
    */
   static async get(req: Request, res: Response, next: NextFunction) {
     try {
@@ -178,6 +188,8 @@ export class ProductController {
    *         description: Products retrieved successfully
    *       400:
    *         description: Bad request
+   *       404:
+   *         description: Seller not found
    */
   static async getProductsBySeller(
     req: Request,
@@ -199,7 +211,7 @@ export class ProductController {
 
   /**
    * @swagger
-   * /api/products/search:
+   * /api/search/products:
    *   get:
    *     summary: Search products by keyword for users
    *     tags: [Product]
@@ -239,6 +251,12 @@ export class ProductController {
    *     tags: [Product]
    *     security:
    *       - sellerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: productId
+   *         required: true
+   *         schema:
+   *           type: string
    *     requestBody:
    *       required: false
    *       content:
@@ -248,12 +266,16 @@ export class ProductController {
    *             properties:
    *               name:
    *                 type: string
+   *                 example: Product 1
    *               description:
    *                 type: string
+   *                 example: This is a product
    *               price:
    *                 type: number
+   *                 example: 10000
    *               stock:
    *                 type: number
+   *                 example: 10
    *               image:
    *                 type: string
    *                 format: binary
@@ -262,6 +284,10 @@ export class ProductController {
    *         description: Product updated successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Product not found
    */
   static async update(req: Request, res: Response, next: NextFunction) {
     try {
@@ -311,6 +337,10 @@ export class ProductController {
    *         description: Product deleted successfully
    *       400:
    *         description: Bad request
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: Product not found or seller not found
    */
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {

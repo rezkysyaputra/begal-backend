@@ -25,7 +25,7 @@ publicRoute.post(
 );
 publicRoute.post('/sellers/login', SellerController.login);
 publicRoute.get('/sellers', SellerController.getAll);
-
+publicRoute.get('/users/sellers/:sellerId', SellerController.getById);
 // PRODUCTS
 publicRoute.get('/products', ProductController.getAllProducts);
 publicRoute.get(

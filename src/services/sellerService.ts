@@ -17,6 +17,7 @@ import { SellerModel } from '../models/sellerModel';
 import { extractPublicId } from '../helpers/extractPublicId';
 import { UserModel } from '../models/userModel';
 import { bcryptPassword, comparePassword } from '../helpers/bcryptPassword';
+import mongoose from 'mongoose';
 
 export class SellerService {
   static async register(
@@ -93,6 +94,17 @@ export class SellerService {
 
   static async get(seller: { id: string }): Promise<GetSellerResponse> {
     const foundSeller = await SellerModel.findById(seller.id);
+    if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
+
+    return toSellerResponse(foundSeller);
+  }
+
+  static async getById(sellerId: string): Promise<GetSellerResponse> {
+    if (!mongoose.Types.ObjectId.isValid(sellerId)) {
+      throw new ResponseError(404, 'Seller tidak ditemukan');
+    }
+
+    const foundSeller = await SellerModel.findOne({ _id: sellerId });
     if (!foundSeller) throw new ResponseError(404, 'Seller tidak ditemukan');
 
     return toSellerResponse(foundSeller);

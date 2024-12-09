@@ -101,6 +101,16 @@ describe('POST /api/users/register', () => {
     expect(response.body.success).toBe(false);
     expect(response.body.errors).toBeDefined();
   });
+
+  it('should return a email already exists error', async () => {
+    const response = await request(app)
+      .post('/api/users/register')
+      .send({ ...userData, name: 'bejo' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.errors).toBeDefined();
+  });
 });
 
 describe('POST /api/users/login', () => {
@@ -115,9 +125,19 @@ describe('POST /api/users/login', () => {
     expect(response.body.token).toBeDefined();
   });
 
-  it('should return a email or password invalid error', async () => {
+  it('should return a email invalid error', async () => {
     const response = await request(app).post('/api/users/login').send({
-      email: 'wrongemail',
+      email: 'wrongemail@gmail.com',
+      password: userData.password,
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+    expect(response.body.errors).toBeDefined();
+  });
+  it('should return a password invalid error', async () => {
+    const response = await request(app).post('/api/users/login').send({
+      email: userData.email,
       password: 'wrongpassword',
     });
 
