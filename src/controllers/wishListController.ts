@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from 'express';
-import { WishListService } from '../services/wishListService';
+import { NextFunction, Request, Response } from "express";
+import { WishListService } from "../services/wishListService";
 
 /**
  * @swagger
@@ -10,7 +10,7 @@ import { WishListService } from '../services/wishListService';
 export class WishListController {
   /**
    * @swagger
-   * /api/wishlists:
+   * /api/users/wishlist:
    *   post:
    *     tags: [WishList]
    *     summary: Create wishlist only by user
@@ -55,7 +55,7 @@ export class WishListController {
 
   /**
    * @swagger
-   * /api/wishlists:
+   * /api/users/wishlist:
    *   get:
    *     tags: [WishList]
    *     summary: Get all wishlists only by user
@@ -86,7 +86,7 @@ export class WishListController {
 
   /**
    * @swagger
-   * /api/wishlists/{wishlistId}:
+   * /api/users/wishlist/{wishlistId}:
    *   delete:
    *     tags: [WishList]
    *     summary: Delete wishlist by ID only by user
