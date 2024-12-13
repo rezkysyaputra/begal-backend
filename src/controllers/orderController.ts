@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { OrderService } from '../services/orderService';
-import { Order } from '../types/orderType';
+import { Request, Response, NextFunction } from "express";
+import { OrderService } from "../services/orderService";
+import { Order } from "../types/orderType";
 
 /**
  * @swagger
@@ -211,7 +211,7 @@ export class OrderController {
    *               status:
    *                 type: string
    *                 enum: [ 'delivered' ,'cancelled']
-   *                 example: 'confirmed'
+   *                 example: 'delivered'
    *     responses:
    *       200:
    *         description: Order status updated successfully

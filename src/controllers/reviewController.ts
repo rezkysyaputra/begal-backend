@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-import { ReviewService } from '../services/reviewService';
-import { ReviewResponse } from '../types/reviewType';
+import { NextFunction, Request, Response } from "express";
+import { ReviewService } from "../services/reviewService";
+import { ReviewResponse } from "../types/reviewType";
 
 /**
  * @swagger
@@ -32,8 +32,10 @@ export class ReviewController {
    *                 type: string
    *               rating:
    *                 type: number
-   *               review:
+   *                 example: 5
+   *               comment:
    *                 type: string
+   *                 example: keren bang
    *     responses:
    *       200:
    *         description: Review created successfully
@@ -57,13 +59,13 @@ export class ReviewController {
 
   /**
    * @swagger
-   * /api/users/reviews/{reviewId}:
+   * /api/users/reviews/{sellerId}:
    *   get:
-   *     summary: Get a review by ID for user
+   *     summary: Get a review by sellerId for user
    *     tags: [Review]
    *     parameters:
    *       - in: path
-   *         name: reviewId
+   *         name: sellerId
    *         required: true
    *         schema:
    *           type: string
@@ -144,8 +146,10 @@ export class ReviewController {
    *             properties:
    *               rating:
    *                 type: number
-   *               review:
+   *                 example: 3
+   *               comment:
    *                 type: string
+   *                 example: di tingkatkan lagi kualitasnya
    *     responses:
    *       200:
    *         description: Review updated successfully
